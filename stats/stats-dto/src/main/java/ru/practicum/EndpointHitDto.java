@@ -16,7 +16,7 @@ public class EndpointHitDto {
     //readOnly: true
     // example: 1
     //@NotBlank
-    private final Long id;
+    private Long id;
     //Идентификатор сервиса для которого записывается информация
     //example: ewm-main-service
     //@NotBlank
