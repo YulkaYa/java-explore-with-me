@@ -8,10 +8,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.lang.management.ManagementPermission;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StatsClient {
@@ -27,21 +29,17 @@ public class StatsClient {
     private String statsServiceUrl;
 
     public void saveHit(EndpointHitDto endpointHitDto) {
-        restTemplate.postForLocation(statsServiceUrl + "/hit", endpointHitDto);
+        restTemplate.postForObject(statsServiceUrl + "/hit", endpointHitDto, Void.class);
     }
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(statsServiceUrl + "/stats")
-                .queryParam("start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .queryParam("end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-        if (uris != null && !uris.isEmpty()) {
-            builder.queryParam("uris", String.join(",", uris));
-        }
-
-        builder.queryParam("unique", unique);
-
-        ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(builder.toUriString(), ViewStatsDto[].class);
+        Map<String, Object> parameters = Map.of(
+                "start", start,
+                "end", end,
+                "uris", uris,
+                "unique", unique
+        );
+        ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(statsServiceUrl + "/stats", ViewStatsDto[].class, parameters);
         return Arrays.asList(response.getBody());
     }
 }
