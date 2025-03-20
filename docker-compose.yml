@@ -35,8 +35,25 @@ services:
       - "8080:8080"
     depends_on:
       - stats-db
-#    environment:
-  #      - MAIN_SERVICE_URL=http://server:9090
+      - ewm-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/explorewithme
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
 
-    # ewm-db:
-  #   image: postgres:16.1
+  ewm-db:
+    image: postgres:16.1
+    ports:
+      - "5433:5432"
+#    depends_on:
+#      - explorewithme
+    environment:
+      POSTGRES_DB: explorewithme
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10

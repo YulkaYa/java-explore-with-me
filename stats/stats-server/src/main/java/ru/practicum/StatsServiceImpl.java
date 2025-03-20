@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ public class StatsServiceImpl implements StatsService {
 
     private final StatsRepository statsRepository;
 
+    @Transactional
     public void saveHit(EndpointHitDto endpointHitDto) {
         EndpointHit endpointHit = new EndpointHit();
         endpointHit.setApp(endpointHitDto.getApp());
