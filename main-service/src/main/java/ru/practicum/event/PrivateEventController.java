@@ -61,7 +61,7 @@ public class PrivateEventController {
             @PathVariable Long userId,
             @PathVariable Long eventId,
             @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest) {
-        return eventService.updateEvent(userId, eventId, updateEventUserRequest);
+        return eventService.updateEvent(userId, eventId, updateEventUserRequest, 2);
     }
 
     // Получение информации о запросах на участие в событии текущего пользователя

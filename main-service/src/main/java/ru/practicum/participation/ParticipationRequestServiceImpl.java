@@ -93,6 +93,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Transactional
     @Override
     public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest) {
+        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
         ParticipationRequestStatus updateStatus = updateRequest.getStatus();
         ParticipationRequestStatus confirmed = ParticipationRequestStatus.CONFIRMED;
         ParticipationRequestStatus rejected = ParticipationRequestStatus.REJECTED;
@@ -110,7 +111,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         List<ParticipationRequest> requests = participationRequestRepository.findAllByIdIn(updateRequest.getRequestIds());
 
-        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
         long limit = event.getParticipantLimit();
         long countOfConfirmedRequests = participationRequestRepository.countByEventIdAndStatus(eventId, confirmed);
 
