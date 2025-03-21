@@ -86,15 +86,23 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     // Получение заявок на участие в событии текущего пользователя
     @Override
-    public List<ParticipationRequestDto> getEventParticipants(Long userId , Long eventId) {
+    public List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId) {
         return mapper.toListParticipationRequestDto(participationRequestRepository.findByEventIdAndRequesterId(eventId, userId));
     }
 
     @Transactional
     @Override
     public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest) {
+        ParticipationRequestStatus updateStatus = updateRequest.getStatus();
+        ParticipationRequestStatus confirmed = ParticipationRequestStatus.CONFIRMED;
+        ParticipationRequestStatus rejected = ParticipationRequestStatus.REJECTED;
+
+        if (!updateStatus.equals(confirmed) && !updateStatus.equals(rejected)) {
+            throw new ConditionsNotMetException("Incorrect update status in update request");
+        }
+
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found"));
 
         if (!event.getInitiator().getId().equals(userId)) {
             throw new RuntimeException("Only the event initiator can update request status");
@@ -103,27 +111,35 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         List<ParticipationRequest> requests = participationRequestRepository.findAllByIdIn(updateRequest.getRequestIds());
 
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
+        long limit = event.getParticipantLimit();
+        long countOfConfirmedRequests = participationRequestRepository.countByEventIdAndStatus(eventId, confirmed);
 
-        for (ParticipationRequest request : requests) {
-            if (!request.getStatus().equals(ParticipationRequestStatus.PENDING)) {
-                throw new ConditionsNotMetException("Request must be in PENDING state");
-            }
+        if (limit <= countOfConfirmedRequests) {
+            throw new ConditionsNotMetException("The participant limit has been reached");
+        }
 
-            Integer limit = event.getParticipantLimit();
-                if (limit > 0 && event.getRequestModeration()) {
-                    if (limit <= participationRequestRepository.countByEventIdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED)) {
-                    request.setStatus(ParticipationRequestStatus.REJECTED);
-                    result.getRejectedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
-            } else {
-                        request.setStatus(ParticipationRequestStatus.CONFIRMED);
+            for (ParticipationRequest request : requests) {
+                if ((limit != 0) && (event.getRequestModeration())) {
+
+                if (!request.getStatus().equals(ParticipationRequestStatus.PENDING)) {
+                    throw new ConditionsNotMetException("Request must be in PENDING state");
+                }
+
+                    if (limit > countOfConfirmedRequests && updateStatus.equals(confirmed)) {
+                        request.setStatus(confirmed);
                         result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
+                        countOfConfirmedRequests++;
+                    } else {
+                        request.setStatus(rejected);
+                        result.getRejectedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
                     }
-                } else {
-                    request.setStatus(ParticipationRequestStatus.CONFIRMED);
+
+            } else {
+                    request.setStatus(confirmed);
                     result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
                 }
-        }
-        participationRequestRepository.saveAll(requests);
+            }
+            participationRequestRepository.saveAll(requests);
         return result;
     }
 }

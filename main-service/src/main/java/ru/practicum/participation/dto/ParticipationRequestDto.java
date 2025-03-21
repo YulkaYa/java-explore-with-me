@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.participation.ParticipationRequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +21,7 @@ public class ParticipationRequestDto {
     @NotNull
     private Long requester;
     @NotNull
-    private String status;
+    private ParticipationRequestStatus status;
     @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss.SSS")
     private LocalDateTime created = LocalDateTime.now();
 }
