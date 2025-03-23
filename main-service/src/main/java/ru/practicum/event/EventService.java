@@ -4,9 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.model.BaseUpdateEventRequest;
-import ru.practicum.event.model.UpdateEventAdminRequest;
-import ru.practicum.event.model.UpdateEventUserRequest;
+import ru.practicum.event.dto.BaseUpdateEventRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;

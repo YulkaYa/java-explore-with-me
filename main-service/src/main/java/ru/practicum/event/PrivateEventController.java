@@ -1,6 +1,5 @@
 package ru.practicum.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.model.UpdateEventUserRequest;
+import ru.practicum.event.dto.UpdateEventUserRequest;
 import ru.practicum.participation.ParticipationRequestService;
 import ru.practicum.participation.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.participation.dto.EventRequestStatusUpdateResult;

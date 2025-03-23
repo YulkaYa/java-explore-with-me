@@ -6,13 +6,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 public class NewCompilationDto {
     private List<Long> events = new ArrayList<>(); // Список идентификаторов событий
     @NotNull

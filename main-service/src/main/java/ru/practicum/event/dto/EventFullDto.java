@@ -1,10 +1,12 @@
 package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.EventState;
 import ru.practicum.location.model.Location;
@@ -12,17 +14,19 @@ import ru.practicum.user.dto.UserShortDto;
 
 import java.time.LocalDateTime;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 public class EventFullDto {
     @NotNull
     private Long id;
     @NotBlank
     @Pattern(regexp = ".*\\S+.*", message = "annotation не может состоять из пробелов или быть пустым")
     private String annotation;
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private CategoryDto category;
+    @Positive
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer confirmedRequests;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime createdOn = LocalDateTime.now();
@@ -31,7 +35,7 @@ public class EventFullDto {
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime eventDate;
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserShortDto initiator;
     @NotNull
     private Location location;

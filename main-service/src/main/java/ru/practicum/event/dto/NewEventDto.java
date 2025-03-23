@@ -4,13 +4,14 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.location.model.Location;
 
 import java.time.LocalDateTime;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 public class NewEventDto {
     @NotBlank
     @Size(min = 20, max = 2000)

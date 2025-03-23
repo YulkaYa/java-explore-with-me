@@ -2,6 +2,7 @@ package ru.practicum.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.event.model.Event;
 import ru.practicum.participation.model.ParticipationRequest;
 
@@ -11,9 +12,9 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@SuperBuilder(toBuilder = true)
 @RequiredArgsConstructor
 @Entity
-@Builder(toBuilder = true)
 @Table(name = "users")
 public class User {
     @Id

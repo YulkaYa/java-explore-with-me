@@ -6,13 +6,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.participation.ParticipationRequestStatus;
 
 import java.time.LocalDateTime;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 public class ParticipationRequestDto {
     @NotNull
     private Long id;

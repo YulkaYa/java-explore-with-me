@@ -8,13 +8,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateCompilationRequest {
     private List<Long> events; // Список идентификаторов событий для обновления

@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -13,11 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class StatsClient {
 
-    private final RestTemplate restTemplate;
-
-    @Autowired
+    private RestTemplate restTemplate;
     public StatsClient(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
     }

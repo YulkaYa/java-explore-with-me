@@ -3,18 +3,21 @@ package ru.practicum.compilation.model;
 import jakarta.persistence.*;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.model.Event;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @ToString
+@SuperBuilder(toBuilder = true)
 @RequiredArgsConstructor
 @Entity
-@Builder(toBuilder = true)
 @Table(name = "compilations")
 public class Compilation {
     @Id
@@ -27,7 +30,7 @@ public class Compilation {
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    private Set<Event> events = new HashSet<>();
+    private List<Event> events = new ArrayList<>();
 
     @Column(nullable = false)
     private Boolean pinned;

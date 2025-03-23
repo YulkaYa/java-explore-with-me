@@ -5,6 +5,7 @@ import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.Compilation;
+import ru.practicum.event.model.Event;
 import ru.practicum.participation.dto.ParticipationRequestDto;
 import ru.practicum.participation.model.ParticipationRequest;
 
@@ -13,8 +14,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ParticipationRequestMapper {
 
-    ParticipationRequest participationRequestDtotoParticipationRequest(ParticipationRequestDto participationRequestDto);
-
+    @Mapping(source = "event.id", target = "event")
+    @Mapping(source = "requester.id", target = "requester")
     ParticipationRequestDto participationRequestToParticipationRequestDto(ParticipationRequest participationRequest);
 
     List<ParticipationRequestDto> toListParticipationRequestDto(List<ParticipationRequest> participationRequest);
@@ -29,7 +30,7 @@ public interface ParticipationRequestMapper {
 
 /*    @Mapping(source = "updateCompilationRequest.events", target = "events")
     @Mapping(source = "updateCompilationRequest.pinned", target = "pinned")
-    @Mapping(source = "updateCompilationRequest.title", target = "title") todo проверить, что маппинг ниже работает ок*/
+    @Mapping(source = "updateCompilationRequest.title", target = "title") todo проверить, что маппинг ниже работает ок*//*
     @Mapping(target = "id", ignore = true)
-    ParticipationRequest updateParticipationRequestFromParticipationRequestDto(UpdateCompilationRequest updateCompilationRequest, @MappingTarget Compilation compilation);
+    ParticipationRequest updateParticipationRequestFromParticipationRequestDto(UpdateCompilationRequest updateCompilationRequest, @MappingTarget Compilation compilation);*/
 }

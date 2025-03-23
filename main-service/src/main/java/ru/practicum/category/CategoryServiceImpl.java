@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
-    private final CategoryMapper mapper;
+    private CategoryMapper mapper;
 
     @Override
     @Transactional

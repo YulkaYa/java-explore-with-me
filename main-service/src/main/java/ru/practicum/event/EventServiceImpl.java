@@ -1,9 +1,5 @@
 package ru.practicum.event;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,30 +18,26 @@ import ru.practicum.event.dal.EventRepository;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.model.BaseUpdateEventRequest;
+import ru.practicum.event.dto.BaseUpdateEventRequest;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.UpdateEventAdminRequest;
-import ru.practicum.event.model.UpdateEventUserRequest;
-import ru.practicum.location.model.Location;
+import ru.practicum.event.dto.UpdateEventAdminRequest;
+import ru.practicum.event.dto.UpdateEventUserRequest;
 import ru.practicum.user.dal.UserRepository;
 import ru.practicum.user.model.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventServiceImpl implements EventService {
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
-    private final EventMapper mapper;
-    private final StatsClient statsClient;
+    private EventRepository eventRepository;
+    private UserRepository userRepository;
+    private CategoryRepository categoryRepository;
+    private EventMapper mapper;
+    private StatsClient statsClient;
 
     // Получение событий, добавленных текущим пользователем
     @Override

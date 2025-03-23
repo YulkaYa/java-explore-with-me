@@ -2,16 +2,14 @@ package ru.practicum.category.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.event.model.Event;
+import lombok.experimental.SuperBuilder;
 
-import java.util.Set;
-
+@SuperBuilder(toBuilder = true)
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Builder(toBuilder = true)
 @Table(name = "categories")
 public class Category {
     @Id

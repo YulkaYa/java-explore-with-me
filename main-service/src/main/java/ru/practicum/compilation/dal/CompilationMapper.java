@@ -17,6 +17,8 @@ public interface CompilationMapper {
 
     List<CompilationDto> toListCompilationDto(List<Compilation> compilations);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "events", ignore = true)
     Compilation newCompilationDtoToCompilation(NewCompilationDto newCompilationDto);
 
 /* todo удалить?
@@ -31,5 +33,6 @@ public interface CompilationMapper {
     @Mapping(source = "updateCompilationRequest.pinned", target = "pinned")
     @Mapping(source = "updateCompilationRequest.title", target = "title") todo проверить, что маппинг ниже работает ок*/
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "events", ignore = true)
     Compilation updateCompilationRequestFromCompilationDto(UpdateCompilationRequest updateCompilationRequest, @MappingTarget Compilation compilation);
 }

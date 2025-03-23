@@ -34,7 +34,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - stats-db
       - ewm-db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/explorewithme
@@ -46,8 +45,8 @@ services:
     image: postgres:16.1
     ports:
       - "5433:5432"
-#    depends_on:
-#      - explorewithme
+    depends_on:
+      - stats-db
     environment:
       POSTGRES_DB: explorewithme
       POSTGRES_USER: user

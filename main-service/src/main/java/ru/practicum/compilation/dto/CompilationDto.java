@@ -5,14 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.event.dto.EventShortDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 public class CompilationDto {
     @NotNull
     private Long id; // Идентификатор подборки

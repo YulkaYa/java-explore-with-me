@@ -27,10 +27,10 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
-    private final ParticipationRequestRepository participationRequestRepository;
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
-    private final ParticipationRequestMapper mapper;
+    private ParticipationRequestRepository participationRequestRepository;
+    private EventRepository eventRepository;
+    private UserRepository userRepository;
+    private ParticipationRequestMapper mapper;
 
     // Создание заявки на участие
     @Transactional

@@ -1,4 +1,4 @@
-package ru.practicum.event.model;
+package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,13 +8,14 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ru.practicum.location.model.Location;
 
 import java.time.LocalDateTime;
 
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
-@Builder(toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseUpdateEventRequest {
     @Pattern(regexp = ".*\\S+.*", message = "annotation не может состоять из пробелов или быть пустым")
