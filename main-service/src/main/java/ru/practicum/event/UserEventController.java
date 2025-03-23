@@ -15,10 +15,10 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/admin/events")
+@RequestMapping("/events")
 @Validated
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AdminEventController {
+public class UserEventController {
         private final EventService eventService;
 
         @GetMapping
@@ -38,6 +38,23 @@ public class AdminEventController {
                                         @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
             return eventService.updateEvent(null, eventId, updateEventAdminRequest, 1);
         }
+
+
+    @GetMapping
+    public List<EventShortDto> getEvents(
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(required = false) Boolean paid,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+            @RequestParam(required = false) Boolean onlyAvailable,
+            @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return eventService.getPublishedEvents(
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+    }
     }
 
 

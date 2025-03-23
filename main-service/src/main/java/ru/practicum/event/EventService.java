@@ -8,6 +8,7 @@ import ru.practicum.event.model.BaseUpdateEventRequest;
 import ru.practicum.event.model.UpdateEventAdminRequest;
 import ru.practicum.event.model.UpdateEventUserRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -25,8 +26,8 @@ public interface EventService {
     @Transactional
     <T extends BaseUpdateEventRequest> EventFullDto updateEvent(Long userId, Long eventId, T updateEventRequest, long durationHours);
 
-/*    @Transactional
-    EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);todo */
+    List<EventFullDto> getEvents(List<Long> users, List<EventState> states, List<Long> categories,
+                                  LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size);
 
-    List<EventShortDto> getEvents(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, int from, int size);
+    List<EventShortDto> getPublishedEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size);
 }
