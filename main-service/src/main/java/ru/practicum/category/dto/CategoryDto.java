@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @RequiredArgsConstructor
 public class CategoryDto {
-    @NotNull
     private Long id;
     @NotBlank
     @Size(min = 1, max = 50)

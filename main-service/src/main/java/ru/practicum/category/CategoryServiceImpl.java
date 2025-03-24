@@ -11,6 +11,7 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.dal.CategoryMapper;
+import ru.practicum.common.NotFoundException;
 import ru.practicum.compilation.model.Compilation;
 
 import java.util.List;
@@ -19,8 +20,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CategoryServiceImpl implements CategoryService {
-    private CategoryRepository categoryRepository;
-    private CategoryMapper mapper;
+    private final CategoryRepository categoryRepository;
+    private final CategoryMapper mapper;
 
     @Override
     @Transactional
@@ -54,6 +55,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long id) {
-        return mapper.categoryToCategoryDto(categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found")));
+        return mapper.categoryToCategoryDto(categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found")));
     }
 }

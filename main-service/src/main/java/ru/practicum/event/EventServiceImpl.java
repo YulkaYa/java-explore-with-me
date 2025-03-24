@@ -220,15 +220,25 @@ public class EventServiceImpl implements EventService {
         PageRequest page;
         if ("EVENT_DATE".equals(sort.toUpperCase())) {
             page = PageRequest.of(from / size, size, Sort.by("eventDate"));
-        } else if ("VIEWS".equals(sort.toUpperCase())) {
+        } /*else if ("VIEWS".equals(sort.toUpperCase())) {
             page = PageRequest.of(from / size, size, Sort.by("views").descending());
-        } else {
+        }*/ else {
             page = PageRequest.of(from / size, size);
         }
 
         return eventRepository.findPublishedEvents(
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, page)
+                text, categories, paid, rangeStart, rangeEnd, // todo onlyAvailable,
+                        page)
                 .map(mapper::eventToEventShortDto)
                 .getContent();
+    }
+
+    @Override
+    public EventFullDto getPublishedEventById(Long id) {
+        Event event = eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event with id not found"));
+        if (event.getState().equals(EventState.PUBLISHED)) {
+            throw new NotFoundException("EventStatus is not Published");
+        }
+        return getEventWithViews(event);
     }
 }
