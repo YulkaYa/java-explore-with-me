@@ -16,7 +16,6 @@ import ru.practicum.compilation.dto.UpdateCompilationRequest;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AdminCompilationController {
     private final CompilationService compilationService;
-    String path;
 
     @PostMapping
     @Validated

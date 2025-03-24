@@ -21,8 +21,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CompilationServiceImpl implements CompilationService {
-    private  CompilationRepository compilationRepository;
-    private  CompilationMapper mapper;
+    private final CompilationRepository compilationRepository;
+    private final CompilationMapper mapper;
 
     @Override
     @Transactional

@@ -19,7 +19,7 @@ public class PrivateParticipationRequestController {
     // Подача заявки на участие в мероприятии
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto addParticipationRequest(@PathVariable Long userId, @RequestParam Long eventId) {
+    public ParticipationRequestDto addParticipationRequest(@PathVariable Long userId, @RequestParam(required = true) Long eventId) {
         return participationRequestService.addParticipationRequest(userId, eventId);
     }
 

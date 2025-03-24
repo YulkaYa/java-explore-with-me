@@ -19,8 +19,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private UserMapper mapper;
+    private final UserRepository userRepository;
+    private final UserMapper mapper;
 
     @Override
     @Transactional

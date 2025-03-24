@@ -33,11 +33,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventServiceImpl implements EventService {
-    private EventRepository eventRepository;
-    private UserRepository userRepository;
-    private CategoryRepository categoryRepository;
-    private EventMapper mapper;
-    private StatsClient statsClient;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final EventMapper mapper;
+    private final StatsClient statsClient;
 
     // Получение событий, добавленных текущим пользователем
     @Override
@@ -218,11 +218,15 @@ public class EventServiceImpl implements EventService {
 
         // Создание объекта Pageable для пагинации и сортировки
         PageRequest page;
-        if ("EVENT_DATE".equals(sort.toUpperCase())) {
-            page = PageRequest.of(from / size, size, Sort.by("eventDate"));
-        } /*else if ("VIEWS".equals(sort.toUpperCase())) {
+        if (sort != null) {
+            if ("EVENT_DATE".equals(sort.toUpperCase())) {
+                page = PageRequest.of(from / size, size, Sort.by("eventDate"));
+            } /*else if ("VIEWS".equals(sort.toUpperCase())) {
             page = PageRequest.of(from / size, size, Sort.by("views").descending());
         }*/ else {
+                page = PageRequest.of(from / size, size);
+            }
+        } else {
             page = PageRequest.of(from / size, size);
         }
 
