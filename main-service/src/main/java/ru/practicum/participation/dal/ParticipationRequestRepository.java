@@ -4,9 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.participation.ParticipationRequestStatus;
+import ru.practicum.participation.dto.RequestsCount;
 import ru.practicum.participation.model.ParticipationRequest;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
 
@@ -32,4 +35,12 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
 
     // Проверить, существует ли заявка на участие для конкретного события и пользователя
     boolean existsByEventIdAndRequesterId(Long eventId, Long requesterId);
+
+    @Query("SELECT pr FROM ParticipationRequest pr WHERE pr.event_id IN :event_ids AND pr.status = :status")
+    List<ParticipationRequest> findAllByEventIdIn(@Param("event_ids") List<Long> event_ids, @Param("status") ParticipationRequestStatus status);
+
+    @Query("SELECT pr.event_id, COUNT(pr) FROM ParticipationRequest pr WHERE pr.event_id IN :event_ids AND pr.status = :status  GROUP BY pr.event_id")
+    Map<Long,Integer> countGroupedByEventIdAndStatus(@Param("event_ids") List<Long> event_ids, @Param("status") ParticipationRequestStatus status);
+
+
 }

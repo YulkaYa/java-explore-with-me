@@ -8,17 +8,8 @@ import ru.practicum.event.model.Event;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
 public interface EventMapper {
-/*    @Mapping(target = "state", ignore = true)
-    @Mapping(target = "requestModeration", ignore = true)
-    @Mapping(target = "publishedOn", ignore = true)
-    @Mapping(target = "participantLimit", ignore = true)
-    @Mapping(target = "location", ignore = true)
-    @Mapping(target = "createdOn", ignore = true)
-    Event eventShortDtoToEvent(EventShortDto eventShortDto); todo*/
 
-    @Mapping(target = "confirmedRequests", ignore = true)
-    @Mapping(target = "views", ignore = true)
-    EventShortDto eventToEventShortDto(Event event);
+    EventShortDto eventToEventShortDto(Event event, Long views, Integer confirmedRequests);
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "state", ignore = true)
@@ -28,6 +19,6 @@ public interface EventMapper {
     @Mapping(target = "category", ignore = true)
     Event newEventDtotoEvent(NewEventDto newEventDto);
 
-    @Mapping(target = "confirmedRequests", ignore = true)
-    EventFullDto eventToEventFullDto(Event event, Long views);
+    EventFullDto eventToEventFullDto(Event event, Long views, Integer confirmedRequests);
+
 }
