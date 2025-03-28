@@ -32,7 +32,7 @@ public class EventShortDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Positive
     private Integer confirmedRequests;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserShortDto initiator;

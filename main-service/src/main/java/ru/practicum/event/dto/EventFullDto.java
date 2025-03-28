@@ -28,12 +28,12 @@ public class EventFullDto {
     @Positive
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer confirmedRequests;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn = LocalDateTime.now();
     @Pattern(regexp = ".*\\S+.*", message = "description не может состоять из пробелов или быть пустым")
     private String description;
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserShortDto initiator;
@@ -43,6 +43,7 @@ public class EventFullDto {
     private Boolean paid;
     @Positive
     private Integer participantLimit;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
     private EventState state;

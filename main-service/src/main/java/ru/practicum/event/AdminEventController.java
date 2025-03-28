@@ -16,8 +16,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/events")
 @Validated
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class AdminEventController {
+    @Autowired
         private final EventService eventService;
 
         @GetMapping

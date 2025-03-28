@@ -1,5 +1,6 @@
 package ru.practicum.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserEventController {
         private final EventService eventService;
+        private final HttpServletRequest httpServletRequest;
 
     @GetMapping
     public List<EventShortDto> getEvents(
@@ -33,7 +35,7 @@ public class UserEventController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size) {
         return eventService.getPublishedEvents(
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, httpServletRequest);
     }
 
     @GetMapping("/{id}")

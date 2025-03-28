@@ -23,7 +23,7 @@ public class BaseUpdateEventRequest {
     private Long category;
     @Pattern(regexp = ".*\\S+.*", message = "description не может состоять из пробелов или быть пустым")
     private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Future
     private LocalDateTime eventDate;
     private Location location;

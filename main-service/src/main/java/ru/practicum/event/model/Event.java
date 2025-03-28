@@ -1,5 +1,6 @@
 package ru.practicum.event.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.category.model.Category;
@@ -30,12 +31,14 @@ public class Event {
     private Category category;
 
     @Column(name = "created_on", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
 
     @Column(nullable = false, length = 7000)
     private String description;
 
     @Column(name = "event_date", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,6 +55,7 @@ public class Event {
     private Integer participantLimit;
 
     @Column(name = "published_on")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
     @Column(name = "request_moderation", nullable = false)
@@ -63,11 +67,6 @@ public class Event {
 
     @Column(nullable = false, length = 120)
     private String title;
-
-/*
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ParticipationRequest> requests; // todo возможно нужно убрать эту связь , т.к. будут лишние запросы
-*/
 
     @Override //todo возможно, надо убрать
     public int hashCode() {

@@ -36,11 +36,19 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     // Проверить, существует ли заявка на участие для конкретного события и пользователя
     boolean existsByEventIdAndRequesterId(Long eventId, Long requesterId);
 
-    @Query("SELECT pr FROM ParticipationRequest pr WHERE pr.event_id IN :event_ids AND pr.status = :status")
-    List<ParticipationRequest> findAllByEventIdIn(@Param("event_ids") List<Long> event_ids, @Param("status") ParticipationRequestStatus status);
-
+/*    List<ParticipationRequest> findByEventIdInAndStatus(
+            List<Long> eventIds,
+            ParticipationRequestStatus status);*/
+/*
     @Query("SELECT pr.event_id, COUNT(pr) FROM ParticipationRequest pr WHERE pr.event_id IN :event_ids AND pr.status = :status  GROUP BY pr.event_id")
     Map<Long,Integer> countGroupedByEventIdAndStatus(@Param("event_ids") List<Long> event_ids, @Param("status") ParticipationRequestStatus status);
+*/
 
-
+    @Query("SELECT new map(pr.event.id as key, COUNT(pr) as value) " +
+            "FROM ParticipationRequest pr " +
+            "WHERE pr.event.id IN :eventIds AND pr.status = :status " +
+            "GROUP BY pr.event.id")
+    Map<Long, Integer> countGroupedByEventIdAndStatus(
+            @Param("eventIds") List<Long> eventIds,
+            @Param("status") ParticipationRequestStatus status);
 }

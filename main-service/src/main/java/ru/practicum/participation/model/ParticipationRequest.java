@@ -1,5 +1,6 @@
 package ru.practicum.participation.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.event.model.Event;
@@ -20,6 +21,7 @@ public class ParticipationRequest {
     private Long id;
 
     @Column(name = "created", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
 
     @ManyToOne(fetch = FetchType.LAZY)

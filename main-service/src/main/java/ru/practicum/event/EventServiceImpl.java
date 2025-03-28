@@ -1,5 +1,6 @@
 package ru.practicum.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import ru.practicum.user.model.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,17 +64,13 @@ public class EventServiceImpl implements EventService {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
         Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
-
-        Map<Long, Long> eventsIdsAndCategoriesIds = eventRepository.findCategoryByEventIdIn(eventIds);
-        Map<Long, Category> mapOfCategories= categoryRepository.findAllById(eventsIdsAndCategoriesIds.values())
-                .stream()
-                .collect(Collectors.toMap(Category::getId, category -> category));
+        Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
 
         return events.stream()
                 .map(event -> {
                     //todo setInitiator?
                     Long eventId = event.getId();
-                    Category category = mapOfCategories.get(eventsIdsAndCategoriesIds.get(eventId));
+                    Category category = mapOfCategories.get(mapOfCategories.get(eventId));
                     Long views = eventIdsAndViews.get(eventId);
                     Integer confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
                     event.setCategory(category);
@@ -86,17 +84,13 @@ public class EventServiceImpl implements EventService {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
         Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
-
-        Map<Long, Long> eventsIdsAndCategoriesIds = eventRepository.findCategoryByEventIdIn(eventIds);
-        Map<Long, Category> mapOfCategories= categoryRepository.findAllById(eventsIdsAndCategoriesIds.values())
-                .stream()
-                .collect(Collectors.toMap(Category::getId, category -> category));
+        Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
 
         return events.stream()
                 .map(event -> {
                     //todo setInitiator?
                     Long eventId = event.getId();
-                    Category category = mapOfCategories.get(eventsIdsAndCategoriesIds.get(eventId));
+                    Category category = mapOfCategories.get(mapOfCategories.get(eventId));
                     Long views = eventIdsAndViews.get(eventId);
                     Integer confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
                     event.setCategory(category);
@@ -140,7 +134,9 @@ public class EventServiceImpl implements EventService {
         if (event.getState() != EventState.PENDING && event.getState() != EventState.CANCELED) {
             throw new ConditionsNotMetException("Only pending or canceled events can be updated");
         }
-        validateEventDate(updateEventRequest.getEventDate(), durationHours);
+        if (updateEventRequest.getEventDate() != null) {
+            validateEventDate(updateEventRequest.getEventDate(), durationHours);
+        }
 
         event  = updateFieldsOfEvent(updateEventRequest, event);
 
@@ -258,12 +254,16 @@ public class EventServiceImpl implements EventService {
             Boolean onlyAvailable,
             String sort,
             int from,
-            int size) {
+            int size,
+            HttpServletRequest httpServletRequest) {
 
         // Если диапазон дат не указан, выбираем события, которые произойдут позже текущего времени
         if (rangeStart == null && rangeEnd == null) {
             rangeStart = LocalDateTime.now();
         }
+
+        log.info("client ip: {}", httpServletRequest.getRemoteAddr()); // todo дебагааа
+        log.info("endpoint path: {}", httpServletRequest.getRequestURI()); // todo дебагааа
 
         // Создание объекта Pageable для пагинации и сортировки
         PageRequest page = PageRequest.of(from / size, size);
@@ -301,13 +301,15 @@ public class EventServiceImpl implements EventService {
 
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {
         List<String> uris = new ArrayList<>();
+
         LocalDateTime startDate = LocalDateTime.now();
         for (Event event: events) {
             uris.add("/events/" + event.getId());
-            if (event.getPublishedOn().isBefore(startDate)) {
+            if (event.getPublishedOn() != null && event.getPublishedOn().isBefore(startDate)) {
                 startDate = event.getPublishedOn();
             }
         }
+
         List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startDate, LocalDateTime.now(), uris, false);
         Map<Long, Long> result = new HashMap<>();
         viewStatsDtos

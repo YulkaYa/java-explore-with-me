@@ -6,6 +6,8 @@ import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
 
+import java.time.LocalDateTime;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
 public interface EventMapper {
 
@@ -16,7 +18,7 @@ public interface EventMapper {
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "initiator", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "category.id", source = "category")
     Event newEventDtotoEvent(NewEventDto newEventDto);
 
     EventFullDto eventToEventFullDto(Event event, Long views, Integer confirmedRequests);

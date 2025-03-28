@@ -23,6 +23,7 @@ public class ParticipationRequestDto {
     private Long requester;
     @NotNull
     private ParticipationRequestStatus status;
-    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss.SSS")
+    //@JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss") todo
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created = LocalDateTime.now();
 }

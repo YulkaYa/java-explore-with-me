@@ -7,6 +7,7 @@ import org.springframework.data.domain.Range;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.category.model.Category;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.EventState;
 import ru.practicum.event.model.Event;
@@ -15,19 +16,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findByInitiatorId(Long userId, Pageable page);
-    @Query("SELECT e.id, e.category.id FROM Event e " +
-            "WHERE (:i IS NULL OR e.id IN :ids) ")
-    Map<Long, Long> findCategoryByEventIdIn(List<Long> eventIds);
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
-            "AND (:states IS NULL OR e.state IN :states) " +
-            "AND (:categories IS NULL OR e.category.id IN :categories) " +
-            "AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart) " +
-            "AND (:rangeEnd IS NULL OR e.eventDate <= :rangeEnd)")
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.category WHERE e.id IN :eventIds")
+    List<Event> findAllWithCategoriesByEventIds(@Param("eventIds") List<Long> eventIds);
+
+    default Map<Long, Category> getCategoriesMapByEventIds(List<Long> eventIds) {
+        return findAllWithCategoriesByEventIds(eventIds).stream()
+                .collect(Collectors.toMap(
+                        Event::getId,
+                        Event::getCategory
+                ));
+    }
+
+
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
 
     @Query("SELECT e FROM Event e " +
