@@ -21,7 +21,7 @@ public class BaseUpdateEventRequest {
     @Pattern(regexp = ".*\\S+.*", message = "annotation не может состоять из пробелов или быть пустым")
     private String annotation;
     private Long category;
-    @Pattern(regexp = ".*\\S+.*", message = "description не может состоять из пробелов или быть пустым")
+    @Pattern(regexp = "(\\n*.*\\r*.*)*(.*\\S+.*)*(\\n*.*\\r*.*)*", message = "description не может состоять из пробелов или быть пустым")
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Future

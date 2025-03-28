@@ -302,12 +302,24 @@ public class EventServiceImpl implements EventService {
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {
         List<String> uris = new ArrayList<>();
 
-        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime startDate = null;
+       LocalDateTime createdOn = LocalDateTime.now();
+ /*        LocalDateTime publishedOn = null;*/
         for (Event event: events) {
-            uris.add("/events/" + event.getId());
-            if (event.getPublishedOn() != null && event.getPublishedOn().isBefore(startDate)) {
-                startDate = event.getPublishedOn();
-            }
+                uris.add("/events/" + event.getId());
+                if (startDate == null) {
+                    if (event.getPublishedOn() != null) {
+                        startDate = event.getPublishedOn();
+                    } else if (event.getCreatedOn().isBefore(createdOn)) {
+                        createdOn = event.getCreatedOn();
+                    }
+                } else if (event.getPublishedOn() != null && event.getPublishedOn().isBefore(startDate)) {
+                    startDate = event.getPublishedOn();
+                }
+        }
+
+        if (startDate == null) {
+            startDate = createdOn;
         }
 
         List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startDate, LocalDateTime.now(), uris, false);

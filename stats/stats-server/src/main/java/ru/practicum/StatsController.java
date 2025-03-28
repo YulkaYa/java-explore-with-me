@@ -36,15 +36,17 @@ public class StatsController {
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
     public List<ViewStatsDto> getStats(
-            @RequestParam(required = false)  String start,
-            @RequestParam(required = false)  String end,
+            @RequestParam(required = false)  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+            @RequestParam(required = false)  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
 
+/*
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime start1 = LocalDateTime.parse(URLDecoder.decode(start, StandardCharsets.UTF_8), formatter);
         LocalDateTime end1 = LocalDateTime.parse(URLDecoder.decode(end, StandardCharsets.UTF_8), formatter);
+*/
 
-        return statsService.getStats(start1, end1, uris, unique);
+        return statsService.getStats(start, end, uris, unique);
     }
 }
