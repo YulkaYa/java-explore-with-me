@@ -54,10 +54,6 @@ public class StatsClient {
             builder.queryParam(entry.getKey(), entry.getValue());
         }
 
-        String fullUrl = builder.toUriString();
-        //todo System.out.println("Request URL: " + fullUrl + " vdf");
-
-        // Делаем GET-запрос (ответ будет в виде массива Post[])
         ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(
                 builder.toUriString(),
                 ViewStatsDto[].class

@@ -64,16 +64,19 @@ public class EventServiceImpl implements EventService {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
         Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
-        Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
+        // todo Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
 
         return events.stream()
                 .map(event -> {
-                    //todo setInitiator?
+                    //todo setInitiator? надо проверить, что загрузка прошла
                     Long eventId = event.getId();
-                    Category category = mapOfCategories.get(mapOfCategories.get(eventId));
+                    //todo Category category = mapOfCategories.get(eventId);
                     Long views = eventIdsAndViews.get(eventId);
+                    views = views == null ? 0 : views;
                     Integer confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
-                    event.setCategory(category);
+                    confirmedRequests = confirmedRequests == null ? 0 : confirmedRequests;
+                    // todo  event.setCategory(category);
+                    // todo формируем нужную информацию
                     // формируем нужную информацию
                     return mapper.eventToEventShortDto(event, views, confirmedRequests);
                 })
@@ -84,17 +87,19 @@ public class EventServiceImpl implements EventService {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
         Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
-        Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
+        // todo Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
 
         return events.stream()
                 .map(event -> {
                     //todo setInitiator?
                     Long eventId = event.getId();
-                    Category category = mapOfCategories.get(mapOfCategories.get(eventId));
+                    //todo Category category = mapOfCategories.get(eventId);
                     Long views = eventIdsAndViews.get(eventId);
+                    views = views == null ? 0 : views;
                     Integer confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
-                    event.setCategory(category);
-                    // формируем нужную информацию
+                    confirmedRequests = confirmedRequests == null ? 0 : confirmedRequests;
+                    // todo  event.setCategory(category);
+                    // todo формируем нужную информацию
                     return mapper.eventToEventFullDto(event, views, confirmedRequests);
                 })
                 .collect(Collectors.toList());
@@ -203,19 +208,26 @@ public class EventServiceImpl implements EventService {
 
         if (updateEventRequest.getClass().getSimpleName().equals("UpdateEventAdminRequest")) {
             AdminStateAction adminStateAction = ((UpdateEventAdminRequest) updateEventRequest).getStateAction();
-            if (adminStateAction.equals(AdminStateAction.PUBLISH_EVENT)) {
-                event.setState(EventState.PUBLISHED);
-            } else if (adminStateAction.equals(AdminStateAction.REJECT_EVENT)) {
-                event.setState(EventState.CANCELED);
+            if (adminStateAction != null) {
+                if (adminStateAction.equals(AdminStateAction.PUBLISH_EVENT)) {
+                    event.setState(EventState.PUBLISHED);
+                    event.setPublishedOn(LocalDateTime.now());
+                } else if (adminStateAction.equals(AdminStateAction.REJECT_EVENT)) {
+                    event.setState(EventState.CANCELED);
+                }
             }
         }
 
         if (updateEventRequest.getClass().getSimpleName().equals("UpdateEventUserRequest")) {
             UserStateAction userStateAction = ((UpdateEventUserRequest) updateEventRequest).getStateAction();
-            if (userStateAction.equals(UserStateAction.SEND_TO_REVIEW)) {
-                event.setState(EventState.PENDING);
-            } else if (userStateAction.equals(UserStateAction.CANCEL_REVIEW)) {
-                event.setState(EventState.CANCELED);
+            if (userStateAction != null) {
+                if (userStateAction.equals(UserStateAction.SEND_TO_REVIEW)) {
+                    event.setState(EventState.PENDING);
+                    event.setPublishedOn(null); //todo проверить
+                } else if (userStateAction.equals(UserStateAction.CANCEL_REVIEW)) {
+                    event.setState(EventState.CANCELED);
+                    event.setPublishedOn(null);
+                }
             }
         }
         return event;
@@ -231,15 +243,8 @@ public class EventServiceImpl implements EventService {
             int from,
             int size) {
 
-/*        // Преобразование списка состояний (states) в список EventState
-        List<EventState> eventStates = null;
-        if (states != null) {
-            eventStates = states.stream()
-                    .map(EventState::valueOf)
-                    .toList();
-        } todo */
-
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+
         return getEventFullDtosFromEvents(eventRepository.findEventsByFilters(users, states, categories, rangeStart,
                 rangeEnd, page).getContent());
     }
@@ -273,13 +278,15 @@ public class EventServiceImpl implements EventService {
                         page).getContent().stream().collect(Collectors.toMap(Event::getId, event -> event));
         List<EventShortDto> eventsShortDtos = getEventShortDtosFromEvents(mapEvents.values().stream().toList());
 
+        if (sort != null) {
             if ("EVENT_DATE".equals(sort.toUpperCase())) {
                 eventsShortDtos.sort(Comparator.comparing(EventShortDto::getEventDate));
             } else if ("VIEWS".equals(sort.toUpperCase())) {
                 eventsShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
+            }
         }
-
-            if (onlyAvailable) {
+        System.out.println(eventsShortDtos);
+            if (onlyAvailable != null && onlyAvailable) {
                 for (EventShortDto eventShortDto: eventsShortDtos) {
                     Integer limit = mapEvents.get(eventShortDto.getId()).getParticipantLimit();
                     if (!(eventShortDto.getConfirmedRequests() < limit || limit == 0)) {
@@ -287,13 +294,14 @@ public class EventServiceImpl implements EventService {
                     }
                 }
             }
+        System.out.println(eventsShortDtos);
         return eventsShortDtos;
     }
 
     @Override
     public EventFullDto getPublishedEventById(Long id) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event with id not found"));
-        if (event.getState().equals(EventState.PUBLISHED)) {
+        if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("EventStatus is not Published");
         }
         return getEventFullDtosFromEvents(List.of(event)).getFirst();
@@ -302,10 +310,10 @@ public class EventServiceImpl implements EventService {
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {
         List<String> uris = new ArrayList<>();
 
-        LocalDateTime startDate = null;
+       LocalDateTime startDate = null;
        LocalDateTime createdOn = LocalDateTime.now();
  /*        LocalDateTime publishedOn = null;*/
-        for (Event event: events) {
+        for (Event event: events) { //todo переписать стартовую дату - просто взять самую раннюю createdOn
                 uris.add("/events/" + event.getId());
                 if (startDate == null) {
                     if (event.getPublishedOn() != null) {

@@ -5,10 +5,11 @@ import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.Compilation;
+import ru.practicum.event.dal.EventRepository;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
 public interface CompilationMapper {
 
     Compilation compilationDtotoCompilation(CompilationDto compilationDto);
@@ -18,7 +19,7 @@ public interface CompilationMapper {
     List<CompilationDto> toListCompilationDto(List<Compilation> compilations);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "events", ignore = true)
+    @Mapping(target = "events", source = "events")
     Compilation newCompilationDtoToCompilation(NewCompilationDto newCompilationDto);
 
 /* todo удалить?

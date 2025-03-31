@@ -1,12 +1,14 @@
 package ru.practicum.event.dal;
 
 import org.mapstruct.*;
+import ru.practicum.event.EventServiceImpl;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
 public interface EventMapper {
@@ -22,5 +24,4 @@ public interface EventMapper {
     Event newEventDtotoEvent(NewEventDto newEventDto);
 
     EventFullDto eventToEventFullDto(Event event, Long views, Integer confirmedRequests);
-
 }
