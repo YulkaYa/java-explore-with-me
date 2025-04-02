@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.EndpointHitDto;
 import ru.practicum.StatsClient;
 import ru.practicum.ViewStatsDto;
 import ru.practicum.category.dal.CategoryRepository;
@@ -56,8 +58,6 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findByInitiatorId(userId, page).getContent();
 
         return getEventShortDtosFromEvents(events);
-
-        // return eventRepository.findByInitiatorId(userId); todo
     }
 
     private List<EventShortDto> getEventShortDtosFromEvents(List<Event> events) {
@@ -139,6 +139,7 @@ public class EventServiceImpl implements EventService {
         if (event.getState() != EventState.PENDING && event.getState() != EventState.CANCELED) {
             throw new ConditionsNotMetException("Only pending or canceled events can be updated");
         }
+
         if (updateEventRequest.getEventDate() != null) {
             validateEventDate(updateEventRequest.getEventDate(), durationHours);
         }
@@ -209,11 +210,15 @@ public class EventServiceImpl implements EventService {
         if (updateEventRequest.getClass().getSimpleName().equals("UpdateEventAdminRequest")) {
             AdminStateAction adminStateAction = ((UpdateEventAdminRequest) updateEventRequest).getStateAction();
             if (adminStateAction != null) {
-                if (adminStateAction.equals(AdminStateAction.PUBLISH_EVENT)) {
-                    event.setState(EventState.PUBLISHED);
-                    event.setPublishedOn(LocalDateTime.now());
-                } else if (adminStateAction.equals(AdminStateAction.REJECT_EVENT)) {
-                    event.setState(EventState.CANCELED);
+                if (event.getState().equals(EventState.PENDING)) {
+                    if (adminStateAction.equals(AdminStateAction.PUBLISH_EVENT)) {
+                        event.setState(EventState.PUBLISHED);
+                        event.setPublishedOn(LocalDateTime.now());
+                    } else if (adminStateAction.equals(AdminStateAction.REJECT_EVENT)) {
+                        event.setState(EventState.CANCELED);
+                    }
+                } else {
+                    throw new ConditionsNotMetException("Only pending events can be updated");
                 }
             }
         }
@@ -267,15 +272,14 @@ public class EventServiceImpl implements EventService {
             rangeStart = LocalDateTime.now();
         }
 
-        log.info("client ip: {}", httpServletRequest.getRemoteAddr()); // todo дебагааа
-        log.info("endpoint path: {}", httpServletRequest.getRequestURI()); // todo дебагааа
-
         // Создание объекта Pageable для пагинации и сортировки
         PageRequest page = PageRequest.of(from / size, size);
 
         Map<Long, Event> mapEvents =
                 eventRepository.findPublishedEvents(text, categories, paid, rangeStart, rangeEnd,
                         page).getContent().stream().collect(Collectors.toMap(Event::getId, event -> event));
+
+        sendStats(httpServletRequest);
         List<EventShortDto> eventsShortDtos = getEventShortDtosFromEvents(mapEvents.values().stream().toList());
 
         if (sort != null) {
@@ -285,7 +289,7 @@ public class EventServiceImpl implements EventService {
                 eventsShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
             }
         }
-        System.out.println(eventsShortDtos);
+
             if (onlyAvailable != null && onlyAvailable) {
                 for (EventShortDto eventShortDto: eventsShortDtos) {
                     Integer limit = mapEvents.get(eventShortDto.getId()).getParticipantLimit();
@@ -294,12 +298,23 @@ public class EventServiceImpl implements EventService {
                     }
                 }
             }
-        System.out.println(eventsShortDtos);
         return eventsShortDtos;
     }
 
+    private void sendStats(HttpServletRequest httpServletRequest) {
+        final String appName = "main-service";
+        EndpointHitDto endpointHitDto = EndpointHitDto.builder()
+                .app(appName)
+                        .uri(httpServletRequest.getRequestURI())
+                                .ip(httpServletRequest.getRemoteAddr())
+                                        .timestamp(LocalDateTime.now())
+                                                .build();
+        statsClient.saveHit(endpointHitDto);
+    }
+
     @Override
-    public EventFullDto getPublishedEventById(Long id) {
+    public EventFullDto getPublishedEventById(Long id, HttpServletRequest httpServletRequest) {
+        sendStats(httpServletRequest);
         Event event = eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event with id not found"));
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("EventStatus is not Published");
@@ -309,26 +324,8 @@ public class EventServiceImpl implements EventService {
 
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {
         List<String> uris = new ArrayList<>();
-
-       LocalDateTime startDate = null;
-       LocalDateTime createdOn = LocalDateTime.now();
- /*        LocalDateTime publishedOn = null;*/
-        for (Event event: events) { //todo переписать стартовую дату - просто взять самую раннюю createdOn
-                uris.add("/events/" + event.getId());
-                if (startDate == null) {
-                    if (event.getPublishedOn() != null) {
-                        startDate = event.getPublishedOn();
-                    } else if (event.getCreatedOn().isBefore(createdOn)) {
-                        createdOn = event.getCreatedOn();
-                    }
-                } else if (event.getPublishedOn() != null && event.getPublishedOn().isBefore(startDate)) {
-                    startDate = event.getPublishedOn();
-                }
-        }
-
-        if (startDate == null) {
-            startDate = createdOn;
-        }
+        // todo надо получить список uris
+        LocalDateTime startDate = events.stream().map(Event::getCreatedOn).max(LocalDateTime::compareTo).orElse(LocalDateTime.of(2000,1,1,0,0,0,0));
 
         List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startDate, LocalDateTime.now(), uris, false);
         Map<Long, Long> result = new HashMap<>();

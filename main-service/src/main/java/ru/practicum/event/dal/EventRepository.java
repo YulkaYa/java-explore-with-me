@@ -7,6 +7,7 @@ import org.springframework.data.domain.Range;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.model.Category;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.EventState;
@@ -19,7 +20,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    Page<Event> findByInitiatorId(Long userId, Pageable page);
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.category AND LEFT JOIN FETCH e.initiator  WHERE e.initiator.id in :userId")
+    Page<Event> findByInitiatorId(Long userId, Pageable page); //todo убрать джойны и оставить ручную выгрузку категорий?
 
     @Query("SELECT e FROM Event e LEFT JOIN FETCH e.category AND LEFT JOIN FETCH e.initiator  WHERE e.id IN :eventIds")
     List<Event> findAllWithCategoriesByEventIds(@Param("eventIds") List<Long> eventIds); // todo поправить название и использовать везде для получения полного event?
@@ -32,7 +34,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                 ));
     }
 
-    Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
+    Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);// todo проверить выборку , что нет лишних запросов
 
     @Query("SELECT e FROM Event e " +
             "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
@@ -46,21 +48,21 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("categories") List<Long> categories,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            Pageable pageable);
+            Pageable pageable); // todo проверить выборку , что нет лишних запросов
 
 
     @Query("SELECT e FROM Event e " +
             "WHERE e.state = 'PUBLISHED' " +
-            "AND (:text IS NULL OR LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%'))) " +
-            "AND (:categories IS NULL OR e.category.id IN :categories) " +
-            "AND (:paid IS NULL OR e.paid = :paid) " +
-            "AND (CAST(:rangeStart AS TIMESTAMP)  IS NULL OR e.eventDate >= :rangeStart) " +
-            "AND (CAST(:rangeStart AS TIMESTAMP) IS NULL OR e.eventDate <= :rangeEnd) ")
+            "AND (LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR :text IS NULL) " +
+            "AND (e.category.id IN :categories OR :categories IS NULL) " +
+            "AND (e.paid = :paid OR :paid IS NULL) " +
+            "AND (e.eventDate >= :rangeStart OR CAST(:rangeStart AS TIMESTAMP)  IS NULL) " +
+            "AND (e.eventDate <= :rangeEnd OR CAST(:rangeStart AS TIMESTAMP) IS NULL) ")
     Page<Event> findPublishedEvents(
             @Param("text") String text,
             @Param("categories") List<Long> categories,
             @Param("paid") Boolean paid,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            Pageable page);
+            Pageable page); // todo проверить выборку , что нет лишних запросов
 }

@@ -30,7 +30,6 @@ public class EndpointHitDto {
     /*  IP-адрес пользователя, осуществившего запрос
         //example: 192.163.0.1 */
     @NotBlank
-    @Pattern(regexp = "^([0-9]{1,3}[\\.]){3}[0-9]{1,3}$", message = "ip не соответствует шаблону ip адреса")
     private String ip;
     /*  Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
         //example: 2022-09-06 11:00:23 */

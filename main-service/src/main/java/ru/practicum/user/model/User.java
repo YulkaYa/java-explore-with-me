@@ -27,12 +27,6 @@ public class User {
     @Column(nullable = false, unique = true, length = 254)
     private String email;
 
-/*  @OneToMany(mappedBy = "initiator", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Event> events = new HashSet<>();
-
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ParticipationRequest> requests = new HashSet<>(); todo убрать так как ни в одном дто это не участвует*/
-
     @Override //todo возможно, надо убрать
     public int hashCode() {
         return 17;

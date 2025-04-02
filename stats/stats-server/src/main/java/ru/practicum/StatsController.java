@@ -1,6 +1,7 @@
 package ru.practicum;
 
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.common.ConditionsNotMetException;
 import ru.practicum.common.Create;
 
 import java.net.URLDecoder;
@@ -41,12 +43,9 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
 
-/*
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime start1 = LocalDateTime.parse(URLDecoder.decode(start, StandardCharsets.UTF_8), formatter);
-        LocalDateTime end1 = LocalDateTime.parse(URLDecoder.decode(end, StandardCharsets.UTF_8), formatter);
-*/
-
+        if (start.isAfter(end)) {
+            throw new ValidationException("Start should be before end");
+        }
         return statsService.getStats(start, end, uris, unique);
     }
 }

@@ -40,7 +40,7 @@ public class UserEventController {
 
     @GetMapping("/{id}")
     public EventFullDto getPublishedEventById(@PathVariable  Long id) {
-        return eventService.getPublishedEventById(id);
+        return eventService.getPublishedEventById(id, httpServletRequest);
     }
 }
 
