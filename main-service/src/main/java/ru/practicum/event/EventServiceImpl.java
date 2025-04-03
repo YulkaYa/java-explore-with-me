@@ -47,6 +47,8 @@ public class EventServiceImpl implements EventService {
     private final EventMapper mapper;
     private final StatsClient statsClient;
     private final ParticipationRequestRepository participationRequestRepository;
+    @Value("${app-name}")
+    private String appName;
 
     // Получение событий, добавленных текущим пользователем
     @Override
@@ -302,7 +304,6 @@ public class EventServiceImpl implements EventService {
     }
 
     private void sendStats(HttpServletRequest httpServletRequest) {
-        final String appName = "main-service";
         EndpointHitDto endpointHitDto = EndpointHitDto.builder()
                 .app(appName)
                         .uri(httpServletRequest.getRequestURI())

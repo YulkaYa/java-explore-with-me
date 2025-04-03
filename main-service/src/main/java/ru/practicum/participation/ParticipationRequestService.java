@@ -17,8 +17,10 @@ public interface ParticipationRequestService {
     ParticipationRequestDto cancelParticipationRequest(Long userId, Long requestId);
 
     // Получение заявок на участие в событии текущего пользователя
-    List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId);
+    List<ParticipationRequestDto> getParticipationsByRequesterId(Long userId);
 
    @Transactional
    EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest updateRequest);
+
+    List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId);
 }

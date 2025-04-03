@@ -33,6 +33,6 @@ public class PrivateParticipationRequestController {
     // Получение заявок на участие в мероприятиях текущего пользователя
     @GetMapping
     public List<ParticipationRequestDto> getUserRequests(@PathVariable Long userId) {
-        return participationRequestService.getEventParticipants(userId, null);
+        return participationRequestService.getParticipationsByRequesterId(userId);
     }
 }

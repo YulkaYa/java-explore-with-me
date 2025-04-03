@@ -11,8 +11,10 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.dal.CategoryMapper;
+import ru.practicum.common.ConditionsNotMetException;
 import ru.practicum.common.NotFoundException;
 import ru.practicum.compilation.model.Compilation;
+import ru.practicum.event.dal.EventRepository;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper mapper;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -33,7 +36,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id) {
-        categoryRepository.deleteById(id);
+        getCategoryIfExistOrThrow(id);
+        if (eventRepository.findIdsByCategoryId(id, PageRequest.of(0, 1)).getContent().isEmpty()) {
+            categoryRepository.deleteById(id);
+        } else throw new ConditionsNotMetException("For the requested operation the conditions are not met.");
+
+
     }
 
     @Override
@@ -55,6 +63,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long id) {
-        return mapper.categoryToCategoryDto(categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found")));
+        return mapper.categoryToCategoryDto(getCategoryIfExistOrThrow(id));
+    }
+
+    private Category getCategoryIfExistOrThrow(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
     }
 }

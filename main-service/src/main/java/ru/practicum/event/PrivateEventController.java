@@ -47,8 +47,8 @@ public class PrivateEventController {
     // Получение полной информации о событии, добавленном текущим пользователем
     @GetMapping("/{eventId}")
     public EventFullDto getEventById(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
+            @PathVariable (required = true) Long userId,
+            @PathVariable (required = true) Long eventId) {
         return eventService.getEventByIdAndUser(userId, eventId);
     }
 

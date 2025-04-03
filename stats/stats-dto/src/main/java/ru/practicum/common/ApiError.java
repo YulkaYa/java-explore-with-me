@@ -18,13 +18,12 @@ public class ApiError {
     private List<StackTraceElement> errors;
     private String message;
     private String reason;
-    private String status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
-    private HttpStatus httpStatus;
+    private HttpStatus status;
 
     public ApiError(HttpStatus httpStatus, Throwable e) {
-        this.httpStatus = httpStatus;
+        this.status = httpStatus;
         this.errors = Arrays.stream(e.getStackTrace()).toList();
         this.message = e.toString();
         this.reason = e.getMessage();

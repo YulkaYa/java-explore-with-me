@@ -84,10 +84,19 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return mapper.participationRequestToParticipationRequestDto(participationRequestRepository.save(request));
     }
 
+    // Получение заявок текущего пользователя на участие
+    @Override
+    public List<ParticipationRequestDto> getParticipationsByRequesterId(Long userId) {
+       List<ParticipationRequest> list = participationRequestRepository.findByRequesterId(userId);
+        return mapper.toListParticipationRequestDto(list);
+    }
+
     // Получение заявок на участие в событии текущего пользователя
     @Override
     public List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId) {
-        return mapper.toListParticipationRequestDto(participationRequestRepository.findByEventIdAndRequesterId(eventId, userId));
+        eventRepository.findByIdAndInitiatorId(eventId,userId).orElseThrow(() -> new NotFoundException("No such event with such initiatorId"));
+        List<ParticipationRequest> participationRequests= (participationRequestRepository.findByEventId(eventId));
+        return mapper.toListParticipationRequestDto(participationRequests);
     }
 
     @Transactional

@@ -65,4 +65,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
             Pageable page); // todo проверить выборку , что нет лишних запросов
+
+    @Query("SELECT e.id FROM Event e WHERE e.category.id in :categoryId")
+    Page<Event> findIdsByCategoryId(Long categoryId, Pageable page); // todo проверить выборку , что нет лишних запросов
 }
