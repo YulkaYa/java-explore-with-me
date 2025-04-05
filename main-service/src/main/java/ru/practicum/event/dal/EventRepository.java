@@ -64,8 +64,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("paid") Boolean paid,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            Pageable page); // todo проверить выборку , что нет лишних запросов
+            Pageable page); // todo проверить выборку , что нет лишних запросов - запросы есть в общем методе загрузки в стриме с map
 
     @Query("SELECT e.id FROM Event e WHERE e.category.id in :categoryId")
-    Page<Event> findIdsByCategoryId(Long categoryId, Pageable page); // todo проверить выборку , что нет лишних запросов
+    Page<Long> findIdsByCategoryId(Long categoryId, Pageable page); // todo проверено что нет запросов
+
+    @Query("SELECT e.id FROM Event e WHERE e.id in :eventId")
+    List<Long> findIdsByEventId(List<Long> eventId); // todo проверено что нет запросов
 }

@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateCompilationRequest {
-    private List<Long> events; // Список идентификаторов событий для обновления
+    private List<Long> events = new ArrayList<>(); // Список идентификаторов событий для обновления
     private Boolean pinned; // Закреплена ли подборка
     @Size(min = 1, max = 50)
     private String title; // Заголовок подборки

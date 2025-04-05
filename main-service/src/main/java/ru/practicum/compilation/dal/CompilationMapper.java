@@ -6,34 +6,21 @@ import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.dal.EventRepository;
+import ru.practicum.event.model.Event;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE/*, uses = { EventRepository.class }*/)
 public interface CompilationMapper {
-
-    Compilation compilationDtotoCompilation(CompilationDto compilationDto);
 
     CompilationDto compilationToCompilationDto(Compilation compilation);
 
-    List<CompilationDto> toListCompilationDto(List<Compilation> compilations);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "events", source = "events")
+    Compilation newCompilationDtoToCompilation(NewCompilationDto newCompilationDto, List<Event> events);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "events", source = "events")
-    Compilation newCompilationDtoToCompilation(NewCompilationDto newCompilationDto);
+    Compilation updateCompilationRequestToCompilation(UpdateCompilationRequest updateCompilationRequest, List<Event> events, @MappingTarget Compilation compilation);
 
-/* todo удалить?
-    @Mapping(source = "updateCompilationRequest.events", target = "events")
-    @Mapping(source = "updateCompilationRequest.pinned", target = "pinned")
-    @Mapping(source = "updateCompilationRequest.title", target = "title")
-    @Mapping(source = "id", target = "id")
-    Compilation updateCompilationRequestToCompilation(UpdateCompilationRequest updateCompilationRequest, Long id);
-*/
-
-/*    @Mapping(source = "updateCompilationRequest.events", target = "events")
-    @Mapping(source = "updateCompilationRequest.pinned", target = "pinned")
-    @Mapping(source = "updateCompilationRequest.title", target = "title") todo проверить, что маппинг ниже работает ок*/
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "events", ignore = true)
-    Compilation updateCompilationRequestFromCompilationDto(UpdateCompilationRequest updateCompilationRequest, @MappingTarget Compilation compilation);
 }

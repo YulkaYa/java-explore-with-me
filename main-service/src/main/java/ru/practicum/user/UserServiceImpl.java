@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.category.model.Category;
+import ru.practicum.common.DuplicatedDataException;
 import ru.practicum.user.dal.UserMapper;
 import ru.practicum.user.dal.UserRepository;
 import ru.practicum.user.dto.NewUserRequest;
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto addUser(NewUserRequest newUserRequest) {
         User user = mapper.newUserRequestToUser(newUserRequest);
+        validateNewEmailUser(null, newUserRequest.getEmail());
         return mapper.userToUserDto(userRepository.save(user));
     }
 
@@ -42,5 +45,15 @@ public class UserServiceImpl implements UserService {
                 .map(mapper::userToUserDto)
                 .getContent();
         //return userRepository.findAll(); todo
+    }
+
+    private void validateNewEmailUser(Long id, String emailInNewUser) {
+        User userWithSameEmail = userRepository.findByEmail(emailInNewUser);
+        if (emailInNewUser != null && userWithSameEmail != null) {
+            if (emailInNewUser.equals(userWithSameEmail.getEmail())
+                    && (id == null || !id.equals(userWithSameEmail.getId()))) {
+                throw new DuplicatedDataException("Integrity constraint has been violated.");
+            }
+        }
     }
 }

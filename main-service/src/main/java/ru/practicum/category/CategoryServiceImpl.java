@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.category.dal.CategoryMapper;
 import ru.practicum.category.dal.CategoryRepository;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
-import ru.practicum.category.dal.CategoryMapper;
 import ru.practicum.common.ConditionsNotMetException;
+import ru.practicum.common.DuplicatedDataException;
 import ru.practicum.common.NotFoundException;
-import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.dal.EventRepository;
 
 import java.util.List;
@@ -30,6 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         Category category = mapper.newCategoryDtoToCategory(newCategoryDto);
+        validateNewNameCategory(null, newCategoryDto.getName());
         return mapper.categoryToCategoryDto(categoryRepository.save(category));
     }
 
@@ -47,9 +48,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
-        Category category =  mapper.categoryDtotoCategory(getCategoryById(id));
+        Category category = mapper.categoryDtotoCategory(getCategoryById(id));
+        String nameInNewCategory = categoryDto.getName();
+        validateNewNameCategory(id, nameInNewCategory);
         category = mapper.updateCategoryFromCategoryDto(categoryDto, category);
         return mapper.categoryToCategoryDto(categoryRepository.save(category));
+    }
+
+    private void validateNewNameCategory(Long id, String nameInNewCategory) {
+        Category categoryWithSameName = categoryRepository.findByName(nameInNewCategory);
+        if (nameInNewCategory != null && categoryWithSameName != null) {
+            if (nameInNewCategory.equals(categoryWithSameName.getName())
+                    && (id == null || !id.equals(categoryWithSameName.getId()) )) {
+                throw new DuplicatedDataException("Integrity constraint has been violated.");
+            }
+        }
     }
 
     @Override
