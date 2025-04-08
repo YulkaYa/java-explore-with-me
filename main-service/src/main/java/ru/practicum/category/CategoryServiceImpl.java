@@ -41,8 +41,6 @@ public class CategoryServiceImpl implements CategoryService {
         if (eventRepository.findIdsByCategoryId(id, PageRequest.of(0, 1)).getContent().isEmpty()) {
             categoryRepository.deleteById(id);
         } else throw new ConditionsNotMetException("For the requested operation the conditions are not met.");
-
-
     }
 
     @Override
@@ -59,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category categoryWithSameName = categoryRepository.findByName(nameInNewCategory);
         if (nameInNewCategory != null && categoryWithSameName != null) {
             if (nameInNewCategory.equals(categoryWithSameName.getName())
-                    && (id == null || !id.equals(categoryWithSameName.getId()) )) {
+                    && (id == null || !id.equals(categoryWithSameName.getId()))) {
                 throw new DuplicatedDataException("Integrity constraint has been violated.");
             }
         }
@@ -71,7 +69,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll(page)
                 .map(mapper::categoryToCategoryDto)
                 .getContent();
-        //return userRepository.findAll(); todo
     }
 
     @Override

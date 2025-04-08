@@ -1,13 +1,11 @@
 package ru.practicum.user.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.event.model.Event;
-import ru.practicum.participation.model.ParticipationRequest;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -27,12 +25,12 @@ public class User {
     @Column(nullable = false, unique = true, length = 254)
     private String email;
 
-    @Override //todo возможно, надо убрать
+    @Override
     public int hashCode() {
         return 17;
     }
 
-    @Override //todo возможно, надо убрать
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

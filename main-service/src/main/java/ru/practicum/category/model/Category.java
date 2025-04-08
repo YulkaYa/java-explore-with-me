@@ -19,15 +19,12 @@ public class Category {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-/*    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Event> events; //todo возможно, надо убрать лишнюю связь*/
-
-    @Override //todo возможно, надо убрать
+    @Override
     public int hashCode() {
         return 14;
     }
 
-    @Override //todo возможно, надо убрать
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

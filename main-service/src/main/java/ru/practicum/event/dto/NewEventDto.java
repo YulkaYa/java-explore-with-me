@@ -2,12 +2,10 @@ package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.location.model.Location;
-
 import java.time.LocalDateTime;
 
 @SuperBuilder(toBuilder = true)

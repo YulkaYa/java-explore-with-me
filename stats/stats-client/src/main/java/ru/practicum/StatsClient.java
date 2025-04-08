@@ -1,23 +1,15 @@
 package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +32,9 @@ public class StatsClient {
         // Базовый URL (без параметров)
         String baseUrl = statsServiceUrl + "/stats";
 
-        Map<String, Object > requestParams = Map.of(
+        Map<String, Object> requestParams = Map.of(
                 "start", start,
-                "end", end ,
+                "end", end,
                 "uris", uris.toString(),
                 "unique", String.valueOf(unique)
         );

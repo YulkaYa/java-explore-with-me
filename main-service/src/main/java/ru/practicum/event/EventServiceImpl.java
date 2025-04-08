@@ -278,9 +278,9 @@ public class EventServiceImpl implements EventService {
         List<EventShortDto> eventsShortDtos = getEventShortDtosFromEvents(mapEvents.values().stream().toList());
 
         if (sort != null) {
-            if ("EVENT_DATE".equals(sort.toUpperCase())) {
+            if ("EVENT_DATE".equalsIgnoreCase(sort)) {
                 eventsShortDtos.sort(Comparator.comparing(EventShortDto::getEventDate));
-            } else if ("VIEWS".equals(sort.toUpperCase())) {
+            } else if ("VIEWS".equalsIgnoreCase(sort)) {
                 eventsShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
             }
         }
@@ -325,8 +325,8 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> result = new HashMap<>();
         viewStatsDtos
                 .forEach(viewStatsDto ->
-                        result.put((Long.valueOf(viewStatsDto.getUri().replace("/events/", "")))
-                                , viewStatsDto.getHits()));
+                        result.put((Long.valueOf(viewStatsDto.getUri().replace("/events/", ""))),
+                                viewStatsDto.getHits()));
         return result;
     }
 

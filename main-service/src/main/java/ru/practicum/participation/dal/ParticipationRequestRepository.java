@@ -3,12 +3,8 @@ package ru.practicum.participation.dal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.category.model.Category;
-import ru.practicum.event.model.Event;
 import ru.practicum.participation.ParticipationRequestStatus;
-import ru.practicum.participation.dto.RequestsCount;
 import ru.practicum.participation.model.ParticipationRequest;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,13 +15,7 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     List<ParticipationRequest> findByEventId(Long eventId);
 
     // Найти все заявки на участие для конкретного пользователя
-    List<ParticipationRequest> findByRequesterId(Long requesterId);// todo проверить выгрузку, что нет доп запросов
-
-    // Найти все заявки на участие для конкретного события и пользователя
-    List<ParticipationRequest> findByEventIdAndRequesterId(Long eventId, Long requesterId);
-
-    // Найти все заявки на участие для конкретного события с определенным статусом
-    List<ParticipationRequest> findByEventIdAndStatus(Long eventId, ParticipationRequestStatus status);
+    List<ParticipationRequest> findByRequesterId(Long requesterId);
 
     // Подсчитать количество подтвержденных заявок на участие для конкретного события
     @Query("SELECT COUNT(pr) FROM ParticipationRequest pr WHERE pr.event.id = :eventId AND pr.status = :status")

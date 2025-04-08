@@ -78,7 +78,6 @@ public class CompilationServiceImpl implements CompilationService {
         return compilationRepository.findCompilationsByPinned(pinned, page)
                 .map(mapper::compilationToCompilationDto)
                 .getContent();
-        //return mapper.toListCompilationDto(compilationRepository.findAll()); todo
     }
 
     private Compilation getCompilationByIdOrThrow(Long id) {

@@ -2,8 +2,10 @@ package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.*;
-import lombok.Builder;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +13,6 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.EventState;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.dto.UserShortDto;
-
 import java.time.LocalDateTime;
 
 @SuperBuilder(toBuilder = true)

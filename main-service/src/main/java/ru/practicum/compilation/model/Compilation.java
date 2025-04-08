@@ -1,16 +1,14 @@
 package ru.practicum.compilation.model;
 
 import jakarta.persistence.*;
-
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.category.model.Category;
 import ru.practicum.event.model.Event;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -38,12 +36,12 @@ public class Compilation {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Override //todo возможно, надо убрать
+    @Override
     public int hashCode() {
         return 13;
     }
 
-    @Override //todo возможно, надо убрать
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

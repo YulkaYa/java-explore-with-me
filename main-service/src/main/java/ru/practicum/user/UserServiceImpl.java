@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.category.model.Category;
 import ru.practicum.common.DuplicatedDataException;
 import ru.practicum.user.dal.UserMapper;
 import ru.practicum.user.dal.UserRepository;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.model.User;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -44,7 +42,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByIdIn(ids, page)
                 .map(mapper::userToUserDto)
                 .getContent();
-        //return userRepository.findAll(); todo
     }
 
     private void validateNewEmailUser(Long id, String emailInNewUser) {

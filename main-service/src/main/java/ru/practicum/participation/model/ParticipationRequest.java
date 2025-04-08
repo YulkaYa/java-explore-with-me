@@ -36,12 +36,12 @@ public class ParticipationRequest {
     @Column(nullable = false)
     private ParticipationRequestStatus status = ParticipationRequestStatus.PENDING;
 
-    @Override //todo возможно, надо убрать
+    @Override
     public int hashCode() {
         return 16;
     }
 
-    @Override //todo возможно, надо убрать
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

@@ -2,15 +2,15 @@ package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.EventState;
 import ru.practicum.location.model.Location;
-import ru.practicum.participation.model.ParticipationRequest;
 import ru.practicum.user.model.User;
-
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -68,12 +68,12 @@ public class Event {
     @Column(nullable = false, length = 120)
     private String title;
 
-    @Override //todo возможно, надо убрать
+    @Override
     public int hashCode() {
         return 15;
     }
 
-    @Override //todo возможно, надо убрать
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

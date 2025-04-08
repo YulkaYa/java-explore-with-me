@@ -37,9 +37,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     public ParticipationRequestDto addParticipationRequest(Long userId, Long eventId) {
         User requester = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found")); // todo проверить на лишние запросы
+                .orElseThrow(() -> new NotFoundException("User not found"));
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event not found")); // todo проверить на лишние запросы
+                .orElseThrow(() -> new NotFoundException("Event not found"));
 
         // Проверка, что событие опубликовано
         if (!event.getState().equals(EventState.PUBLISHED)) {
@@ -67,7 +67,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         // Проверка лимита участников
         if (participantLimit > 0 && participantLimit <= countOfConfirmedRequests) {
             throw new ConditionsNotMetException("Participant limit reached");
-        } else if (participantLimit == 0 ) {
+        } else if (participantLimit == 0) {
             request.setStatus(ParticipationRequestStatus.CONFIRMED);
         } else {
             if (requiredModeration) {
@@ -106,7 +106,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     public List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId) {
         eventRepository.findByIdAndInitiatorId(eventId,userId).orElseThrow(() -> new NotFoundException("No such event with such initiatorId"));
-        List<ParticipationRequest> participationRequests= (participationRequestRepository.findByEventId(eventId));
+        List<ParticipationRequest> participationRequests = (participationRequestRepository.findByEventId(eventId));
         return mapper.toListParticipationRequestDto(participationRequests);
     }
 
