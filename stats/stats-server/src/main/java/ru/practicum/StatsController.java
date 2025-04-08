@@ -44,15 +44,6 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
 
-        if (uris != null) {
-            uris = uris.isEmpty() ? null : uris;
-        }
-
-        if (start == null || end == null) {
-            throw new ValidationException("Start and end should not be empty");
-        } else if (start.isAfter(end)) {
-            throw new ValidationException("Start should be before end");
-        }
         return statsService.getStats(start, end, uris, unique);
     }
 }

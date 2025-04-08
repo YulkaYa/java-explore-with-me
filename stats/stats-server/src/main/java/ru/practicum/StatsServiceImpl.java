@@ -1,6 +1,7 @@
 package ru.practicum;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,26 +32,27 @@ public class StatsServiceImpl implements StatsService {
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         if (uris != null) {
-            uris = uris.stream()
-                    .map(uri -> URLDecoder.decode(String.valueOf(uri), StandardCharsets.UTF_8))
-                    .map(uri -> uri.replace("[", ""))
-                    .map(uri -> uri.replace("]", ""))
-                    .toList();
+            if (uris.isEmpty()) {
+                uris = null;
+            } else {
+                uris = uris.stream()
+                        .map(uri -> URLDecoder.decode(String.valueOf(uri), StandardCharsets.UTF_8))
+                        .map(uri -> uri.replace("[", ""))
+                        .map(uri -> uri.replace("]", ""))
+                        .toList();
+            }
         }
-        System.out.println("=4");
-        System.out.println(uris);
+
+        if (start == null || end == null) {
+            throw new ValidationException("Start and end should not be empty");
+        } else if (start.isAfter(end)) {
+            throw new ValidationException("Start should be before end");
+        }
+
         if (unique) {
-            List<ViewStatsDto> df = statsRepository.getUniqueStats(start, end, uris);
-            System.out.println(start + " " + " " + end + " " + " " + uris);
-            System.out.println("=5");
-            System.out.println(df);
-            return df;
+            return statsRepository.getUniqueStats(start, end, uris);
         } else {
-            List<ViewStatsDto> df = statsRepository.getStats(start, end, uris);
-            System.out.println(start + " " + " " + end + " " + " " + uris);
-            System.out.println("=6");
-            System.out.println(df);
-            return df;
+            return statsRepository.getStats(start, end, uris);
         }
     }
 }

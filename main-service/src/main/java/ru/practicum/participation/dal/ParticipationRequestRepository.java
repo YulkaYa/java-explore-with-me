@@ -3,6 +3,8 @@ package ru.practicum.participation.dal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.category.model.Category;
+import ru.practicum.event.model.Event;
 import ru.practicum.participation.ParticipationRequestStatus;
 import ru.practicum.participation.dto.RequestsCount;
 import ru.practicum.participation.model.ParticipationRequest;
@@ -43,4 +45,14 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     List<Map<Long, Long>> countGroupedByEventIdAndStatus(
             @Param("eventIds") List<Long> eventIds,
             @Param("status") ParticipationRequestStatus status);
+
+    default Map<Long, Long> countGroupedByEventIdAndStatusToMap(
+            List<Long> eventIds,
+            ParticipationRequestStatus status) {
+        return countGroupedByEventIdAndStatus(eventIds, status).stream()
+                .collect(Collectors.toMap(
+                        map -> map.get("0"),
+                        map -> map.get("1")
+                ));
+    }
 }

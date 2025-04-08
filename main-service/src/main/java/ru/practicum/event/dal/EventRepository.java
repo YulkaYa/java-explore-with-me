@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e LEFT JOIN FETCH e.category AND LEFT JOIN FETCH e.initiator  WHERE e.initiator.id in :userId")
-    Page<Event> findByInitiatorId(Long userId, Pageable page); //todo убрать джойны и оставить ручную выгрузку категорий?
+    Page<Event> findByInitiatorId(Long userId, Pageable page);
 
     @Query("SELECT e FROM Event e LEFT JOIN FETCH e.category AND LEFT JOIN FETCH e.initiator  WHERE e.id IN :eventIds")
-    List<Event> findAllWithCategoriesByEventIds(@Param("eventIds") List<Long> eventIds); // todo поправить название и использовать везде для получения полного event?
+    List<Event> findAllWithCategoriesByEventIds(@Param("eventIds") List<Long> eventIds);
 
     default Map<Long, Category> getCategoriesMapByEventIds(List<Long> eventIds) {
         return findAllWithCategoriesByEventIds(eventIds).stream()
@@ -34,10 +34,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                 ));
     }
 
-    Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);// todo проверить выборку , что нет лишних запросов
+    Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
 
-    // todo todotodotodo
     @Query("SELECT e FROM Event e " +
+            "LEFT JOIN FETCH e.category AND LEFT JOIN FETCH e.initiator " +
             "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
             "AND (:states IS NULL OR e.state IN :states) " +
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
@@ -49,10 +49,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("categories") List<Long> categories,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            Pageable pageable); // todo проверить выборку , что нет лишних запросов
+            Pageable pageable);
 
 
     @Query("SELECT e FROM Event e " +
+            "LEFT JOIN FETCH e.category AND LEFT JOIN FETCH e.initiator " +
             "WHERE e.state = 'PUBLISHED' " +
             "AND (LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR :text IS NULL) " +
             "AND (e.category.id IN :categories OR :categories IS NULL) " +
@@ -65,11 +66,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("paid") Boolean paid,
             @Param("rangeStart") LocalDateTime rangeStart,
             @Param("rangeEnd") LocalDateTime rangeEnd,
-            Pageable page); // todo проверить выборку , что нет лишних запросов - запросы есть в общем методе загрузки в стриме с map
+            Pageable page);
 
     @Query("SELECT e.id FROM Event e WHERE e.category.id in :categoryId")
-    Page<Long> findIdsByCategoryId(Long categoryId, Pageable page); // todo проверено что нет запросов
+    Page<Long> findIdsByCategoryId(Long categoryId, Pageable page);
 
     @Query("SELECT e.id FROM Event e WHERE e.id in :eventId")
-    List<Long> findIdsByEventId(List<Long> eventId); // todo проверено что нет запросов
+    List<Long> findIdsByEventId(List<Long> eventId);
 }
