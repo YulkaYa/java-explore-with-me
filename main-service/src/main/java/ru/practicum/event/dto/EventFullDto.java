@@ -25,9 +25,9 @@ public class EventFullDto {
     private String annotation;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private CategoryDto category;
-    @Positive
+    @PositiveOrZero
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer confirmedRequests;
+    private Long confirmedRequests;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn = LocalDateTime.now();
     @Pattern(regexp = ".*\\S+.*", message = "description не может состоять из пробелов или быть пустым")
@@ -41,7 +41,7 @@ public class EventFullDto {
     private Location location;
     @NotNull
     private Boolean paid;
-    @Positive
+    @PositiveOrZero
     private Integer participantLimit;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;

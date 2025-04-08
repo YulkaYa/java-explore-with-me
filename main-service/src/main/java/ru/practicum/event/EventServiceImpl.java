@@ -1,6 +1,7 @@
 package ru.practicum.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class EventServiceImpl implements EventService {
 
     private List<EventShortDto> getEventShortDtosFromEvents(List<Event> events) {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
-        Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
+        Map<Long,Long> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
         // todo Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
 
@@ -75,7 +76,7 @@ public class EventServiceImpl implements EventService {
                     //todo Category category = mapOfCategories.get(eventId);
                     Long views = eventIdsAndViews.get(eventId);
                     views = views == null ? 0 : views;
-                    Integer confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
+                    Long confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
                     confirmedRequests = confirmedRequests == null ? 0 : confirmedRequests;
                     // todo  event.setCategory(category);
                     // todo формируем нужную информацию
@@ -87,7 +88,7 @@ public class EventServiceImpl implements EventService {
 
     private List<EventFullDto> getEventFullDtosFromEvents(List<Event> events) {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
-        Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
+        Map<Long,Long> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
         // todo Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
 
@@ -98,13 +99,38 @@ public class EventServiceImpl implements EventService {
                     //todo Category category = mapOfCategories.get(eventId);
                     Long views = eventIdsAndViews.get(eventId);
                     views = views == null ? 0 : views;
-                    Integer confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
+                    Long confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
                     confirmedRequests = confirmedRequests == null ? 0 : confirmedRequests;
                     // todo  event.setCategory(category);
                     // todo формируем нужную информацию
                     return mapper.eventToEventFullDto(event, views, confirmedRequests);
                 })
                 .collect(Collectors.toList());
+    }
+
+
+    private List<EventFullDto> getEventFullDtosFromEvents1(List<EventFullDto> events) {
+        System.out.println( 3);
+        System.out.println( events);
+        /*        Map<Long,Event> eventsAll = new HashMap<>();*/
+/*        System.out.println( 1);
+        System.out.println(eventsAll);*/
+        /*                events.stream().forEach(event -> eventsAll.put((event.getId()), event));*/
+        // todo Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
+        System.out.println( 2);
+        /*        System.out.println( eventsAll);*/
+/*        eventsAll.forEach((key, value)->
+                mapper.eventToEventFullDto(
+                        value,
+                        ((eventIdsAndViews.get(value)) == null ? 0 : eventIdsAndViews.get(value)),
+                        (eventIdsAndConfirmedRequests.get(value)) == null ? 0 : eventIdsAndConfirmedRequests.get(value)));
+        return new ArrayList<>(eventsAll.values());*/
+/*        List<Long> eventIds = events.stream().map(EventFullDto::getId).toList();
+        Map<Long,Integer> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
+        Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);*/
+        // todo Map<Long, Category> mapOfCategories= eventRepository.getCategoriesMapByEventIds(eventIds);
+
+        return new ArrayList<>();
     }
 
     // Добавление нового события
@@ -124,7 +150,7 @@ public class EventServiceImpl implements EventService {
         event.setState(EventState.PENDING);
         event  = eventRepository.save(event);
 
-        return mapper.eventToEventFullDto(event, 0L, 0);
+        return mapper.eventToEventFullDto(event, 0L, 0L);
     }
 
     // Получение события по ID и пользователю
@@ -147,7 +173,6 @@ public class EventServiceImpl implements EventService {
         }
 
         event  = updateFieldsOfEvent(updateEventRequest, event);
-
         return getEventFullDtosFromEvents(List.of(eventRepository.save(event))).getFirst();
     }
 
@@ -230,7 +255,7 @@ public class EventServiceImpl implements EventService {
             if (userStateAction != null) {
                 if (userStateAction.equals(UserStateAction.SEND_TO_REVIEW)) {
                     event.setState(EventState.PENDING);
-                    event.setPublishedOn(null); //todo проверить
+                    event.setPublishedOn(null);
                 } else if (userStateAction.equals(UserStateAction.CANCEL_REVIEW)) {
                     event.setState(EventState.CANCELED);
                     event.setPublishedOn(null);
@@ -272,6 +297,11 @@ public class EventServiceImpl implements EventService {
         // Если диапазон дат не указан, выбираем события, которые произойдут позже текущего времени
         if (rangeStart == null && rangeEnd == null) {
             rangeStart = LocalDateTime.now();
+        } else if (rangeStart == null) {
+            rangeStart = LocalDateTime.now();
+        }
+        if (rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new ValidationException("Start date should be before end date");
         }
 
         // Создание объекта Pageable для пагинации и сортировки
@@ -325,19 +355,23 @@ public class EventServiceImpl implements EventService {
 
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {
         List<String> uris = new ArrayList<>();
-        // todo надо получить список uris
-        LocalDateTime startDate = events.stream().map(Event::getCreatedOn).max(LocalDateTime::compareTo).orElse(LocalDateTime.of(2000,1,1,0,0,0,0));
-
-        List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startDate, LocalDateTime.now(), uris, false);
+        LocalDateTime startDate = events.stream().map(Event::getCreatedOn).min(LocalDateTime::compareTo).orElse(LocalDateTime.of(2000,1,1,0,0,0,0));
+        events.forEach(event -> uris.add("/events/" + event.getId()));
+        List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startDate.minusHours(1), LocalDateTime.now().plusHours(1), uris, true);
         Map<Long, Long> result = new HashMap<>();
         viewStatsDtos
-                .stream()
-                .peek(viewStatsDto -> result.put(Long.getLong(viewStatsDto.getUri().replace("/events/", "")), viewStatsDto.getHits()));
+                .forEach(viewStatsDto ->
+                        result.put((Long.valueOf(viewStatsDto.getUri().replace("/events/", "")))
+                                , viewStatsDto.getHits()));
         return result;
     }
 
-    private Map<Long, Integer> getConfirmedRequestsByEventIds(List<Long> eventIds) {
+    private Map<Long, Long> getConfirmedRequestsByEventIds(List<Long> eventIds) {
         // Получаем подтвержденные заявки по id событий
-        return  participationRequestRepository.countGroupedByEventIdAndStatus(eventIds, ParticipationRequestStatus.CONFIRMED);
+        List<Map<Long, Long>> participationCountsList = participationRequestRepository.countGroupedByEventIdAndStatus(eventIds, ParticipationRequestStatus.CONFIRMED);
+        Map<Long, Long> participationCounts = new HashMap<>();
+
+        participationCountsList.forEach(entry -> participationCounts.put(entry.get("0"), entry.get("1")));
+        return participationCounts;
     }
 }

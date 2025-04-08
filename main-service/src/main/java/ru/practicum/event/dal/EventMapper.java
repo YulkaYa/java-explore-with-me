@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
 public interface EventMapper {
 
-    EventShortDto eventToEventShortDto(Event event, Long views, Integer confirmedRequests);
+    EventShortDto eventToEventShortDto(Event event, Long views, Long confirmedRequests);
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "state", ignore = true)
@@ -23,5 +23,5 @@ public interface EventMapper {
     @Mapping(target = "category.id", source = "category")
     Event newEventDtotoEvent(NewEventDto newEventDto);
 
-    EventFullDto eventToEventFullDto(Event event, Long views, Integer confirmedRequests);
+    EventFullDto eventToEventFullDto(Event event, Long views, Long confirmedRequests);
 }

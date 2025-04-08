@@ -17,6 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,10 @@ public class StatsController {
             @RequestParam(required = false)  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique) {
+
+        if (uris != null) {
+            uris = uris.isEmpty() ? null : uris;
+        }
 
         if (start == null || end == null) {
             throw new ValidationException("Start and end should not be empty");

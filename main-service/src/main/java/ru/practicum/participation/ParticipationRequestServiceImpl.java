@@ -37,9 +37,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     public ParticipationRequestDto addParticipationRequest(Long userId, Long eventId) {
         User requester = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found")); // todo проверить на лишние запросы
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found")); // todo проверить на лишние запросы
 
         // Проверка, что событие опубликовано
         if (!event.getState().equals(EventState.PUBLISHED)) {
@@ -56,16 +56,27 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConditionsNotMetException("Participation request already exists");
         }
 
-        // Проверка лимита участников
-        if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= participationRequestRepository.countByEventIdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED)) {
-            throw new ConditionsNotMetException("Participant limit reached");
-        }
-
+        Integer participantLimit = event.getParticipantLimit();
+       long countOfConfirmedRequests =  participationRequestRepository.countByEventIdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED);
+       boolean requiredModeration = event.getRequestModeration();
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
         request.setEvent(event);
         request.setRequester(requester);
-        request.setStatus(event.getRequestModeration() ? ParticipationRequestStatus.PENDING : ParticipationRequestStatus.CONFIRMED);
+
+        // Проверка лимита участников
+        if (participantLimit > 0 && participantLimit <= countOfConfirmedRequests) {
+            throw new ConditionsNotMetException("Participant limit reached");
+        } else if (participantLimit == 0 ) {
+            request.setStatus(ParticipationRequestStatus.CONFIRMED);
+        } else {
+            if (requiredModeration) {
+                request.setStatus(ParticipationRequestStatus.PENDING);
+            } else {
+                request.setStatus(ParticipationRequestStatus.CONFIRMED);
+            }
+        }
+
         return mapper.participationRequestToParticipationRequestDto(participationRequestRepository.save(request));
     }
 

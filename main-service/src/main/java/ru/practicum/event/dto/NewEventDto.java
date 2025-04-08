@@ -28,7 +28,7 @@ public class NewEventDto {
     @NotNull
     private Location location;
     private Boolean paid = false;
-    @Positive
+    @PositiveOrZero
     private Integer participantLimit = 0;
     private Boolean requestModeration = true;
     @NotBlank

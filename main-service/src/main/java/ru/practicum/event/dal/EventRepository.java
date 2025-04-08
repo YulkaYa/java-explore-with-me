@@ -36,6 +36,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);// todo проверить выборку , что нет лишних запросов
 
+    // todo todotodotodo
     @Query("SELECT e FROM Event e " +
             "WHERE (:users IS NULL OR e.initiator.id IN :users) " +
             "AND (:states IS NULL OR e.state IN :states) " +
@@ -57,7 +58,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (e.category.id IN :categories OR :categories IS NULL) " +
             "AND (e.paid = :paid OR :paid IS NULL) " +
             "AND (e.eventDate >= :rangeStart OR CAST(:rangeStart AS TIMESTAMP)  IS NULL) " +
-            "AND (e.eventDate <= :rangeEnd OR CAST(:rangeStart AS TIMESTAMP) IS NULL) ")
+            "AND (e.eventDate <= :rangeEnd OR CAST(:rangeEnd AS TIMESTAMP) IS NULL) ")
     Page<Event> findPublishedEvents(
             @Param("text") String text,
             @Param("categories") List<Long> categories,

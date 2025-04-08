@@ -37,8 +37,6 @@ public class StatsClient {
                                        List<String> uris,
                                        boolean unique) {
 
-        RestTemplate restTemplate = new RestTemplate();
-
         // Базовый URL (без параметров)
         String baseUrl = statsServiceUrl + "/stats";
 
@@ -53,12 +51,10 @@ public class StatsClient {
         for (Map.Entry<String, Object> entry : requestParams.entrySet()) {
             builder.queryParam(entry.getKey(), entry.getValue());
         }
-
         ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(
                 builder.toUriString(),
                 ViewStatsDto[].class
         );
-
         return Arrays.asList(response.getBody());
     }
 }

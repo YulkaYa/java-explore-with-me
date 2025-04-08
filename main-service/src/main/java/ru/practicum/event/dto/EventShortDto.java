@@ -2,10 +2,7 @@ package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +27,8 @@ public class EventShortDto {
     @NotNull
     private CategoryDto category;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Positive
-    private Integer confirmedRequests;
+    @PositiveOrZero
+    private Long confirmedRequests;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -2,10 +2,7 @@ package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,7 @@ public class BaseUpdateEventRequest {
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
-    @Positive
+    @PositiveOrZero
     private Integer participantLimit;
     private Boolean requestModeration;
     @Pattern(regexp = ".*\\S+.*", message = "title не может состоять из пробелов или быть пустым")

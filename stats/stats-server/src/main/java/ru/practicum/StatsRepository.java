@@ -13,7 +13,7 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     @Query("SELECT new ru.practicum.ViewStatsDto(e.app, e.uri, COUNT(e.ip)) " +
             "FROM EndpointHit e " +
             "WHERE e.timestamp BETWEEN :start AND :end " +
-            "AND (:uris IS NULL OR e.uri IN :uris) " +
+            "AND ((:uris IS NOT NULL AND e.uri IN :uris) OR (:uris IS NULL AND e.uri IS NOT NULL)) " +
             "GROUP BY e.app, e.uri " +
             "ORDER BY COUNT(e.ip) DESC")
     List<ViewStatsDto> getStats(@Param("start") LocalDateTime start,
@@ -23,7 +23,7 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     @Query("SELECT new ru.practicum.ViewStatsDto(e.app, e.uri, COUNT(DISTINCT e.ip)) " +
             "FROM EndpointHit e " +
             "WHERE e.timestamp BETWEEN :start AND :end " +
-            "AND (:uris IS NULL OR e.uri IN :uris) " +
+            "AND ((:uris IS NOT NULL AND e.uri IN :uris) OR (:uris IS NULL AND e.uri IS NOT NULL)) " +
             "GROUP BY e.app, e.uri " +
             "ORDER BY COUNT(DISTINCT e.ip) DESC")
     List<ViewStatsDto> getUniqueStats(@Param("start") LocalDateTime start,
