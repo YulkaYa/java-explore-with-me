@@ -12,9 +12,7 @@ import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.user.dal.UserMapper;
 
-import java.util.List;
-
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class, EventServiceImpl.class, CategoryMapper.class, UserMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {EventRepository.class, EventServiceImpl.class, CategoryMapper.class, UserMapper.class})
 public interface EventMapper {
 
     @Mapping(target = "createdOn", ignore = true)
@@ -26,8 +24,6 @@ public interface EventMapper {
     Event newEventDtotoEvent(NewEventDto newEventDto);
 
     EventFullDto eventToEventFullDto(Event event, Long views, Long confirmedRequests);
-    EventShortDto eventToEventShortDto(Event event, Long views, Long confirmedRequests);
 
-/*     List<EventShortDto> getEventShortDtosFromEvents(List<Event> events);
-     List<EventFullDto> getEventEventFullDtosFromEvents(List<Event> events);*/
+    EventShortDto eventToEventShortDto(Event event, Long views, Long confirmedRequests);
 }
