@@ -45,12 +45,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateNewEmailUser(Long id, String emailInNewUser) {
-        User userWithSameEmail = userRepository.findByEmail(emailInNewUser);
-        if (emailInNewUser != null && userWithSameEmail != null) {
-            if (emailInNewUser.equals(userWithSameEmail.getEmail())
-                    && (id == null || !id.equals(userWithSameEmail.getId()))) {
-                throw new DuplicatedDataException("Integrity constraint has been violated.");
-            }
+        Long userIdWithSameEmail = userRepository.findByEmail(emailInNewUser);
+
+        if (userIdWithSameEmail != null && !userIdWithSameEmail.equals(id)) {
+            throw new DuplicatedDataException("Integrity constraint has been violated.");
         }
     }
 }

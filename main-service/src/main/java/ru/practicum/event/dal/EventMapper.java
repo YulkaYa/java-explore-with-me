@@ -4,15 +4,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import ru.practicum.category.dal.CategoryMapper;
+import ru.practicum.event.EventServiceImpl;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
+import ru.practicum.user.dal.UserMapper;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class })
+import java.util.List;
+
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventRepository.class, EventServiceImpl.class, CategoryMapper.class, UserMapper.class})
 public interface EventMapper {
-
-    EventShortDto eventToEventShortDto(Event event, Long views, Long confirmedRequests);
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "state", ignore = true)
@@ -23,4 +26,8 @@ public interface EventMapper {
     Event newEventDtotoEvent(NewEventDto newEventDto);
 
     EventFullDto eventToEventFullDto(Event event, Long views, Long confirmedRequests);
+    EventShortDto eventToEventShortDto(Event event, Long views, Long confirmedRequests);
+
+/*     List<EventShortDto> getEventShortDtosFromEvents(List<Event> events);
+     List<EventFullDto> getEventEventFullDtosFromEvents(List<Event> events);*/
 }

@@ -57,8 +57,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         Integer participantLimit = event.getParticipantLimit();
-       long countOfConfirmedRequests =  participationRequestRepository.countByEventIdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED);
-       boolean requiredModeration = event.getRequestModeration();
+        long countOfConfirmedRequests = participationRequestRepository.countByEventIdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED);
+        boolean requiredModeration = event.getRequestModeration();
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
         request.setEvent(event);
@@ -98,14 +98,14 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     // Получение заявок текущего пользователя на участие
     @Override
     public List<ParticipationRequestDto> getParticipationsByRequesterId(Long userId) {
-       List<ParticipationRequest> list = participationRequestRepository.findByRequesterId(userId);
+        List<ParticipationRequest> list = participationRequestRepository.findByRequesterId(userId);
         return mapper.toListParticipationRequestDto(list);
     }
 
     // Получение заявок на участие в событии текущего пользователя
     @Override
     public List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId) {
-        eventRepository.findByIdAndInitiatorId(eventId,userId).orElseThrow(() -> new NotFoundException("No such event with such initiatorId"));
+        eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new NotFoundException("No such event with such initiatorId"));
         List<ParticipationRequest> participationRequests = (participationRequestRepository.findByEventId(eventId));
         return mapper.toListParticipationRequestDto(participationRequests);
     }
@@ -138,28 +138,28 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConditionsNotMetException("The participant limit has been reached");
         }
 
-            for (ParticipationRequest request : requests) {
-                if ((limit != 0) && (event.getRequestModeration())) {
+        for (ParticipationRequest request : requests) {
+            if ((limit != 0) && (event.getRequestModeration())) {
 
                 if (!request.getStatus().equals(ParticipationRequestStatus.PENDING)) {
                     throw new ConditionsNotMetException("Request must be in PENDING state");
                 }
 
-                    if (limit > countOfConfirmedRequests && updateStatus.equals(confirmed)) {
-                        request.setStatus(confirmed);
-                        result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
-                        countOfConfirmedRequests++;
-                    } else {
-                        request.setStatus(rejected);
-                        result.getRejectedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
-                    }
-
-            } else {
+                if (limit > countOfConfirmedRequests && updateStatus.equals(confirmed)) {
                     request.setStatus(confirmed);
                     result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
+                    countOfConfirmedRequests++;
+                } else {
+                    request.setStatus(rejected);
+                    result.getRejectedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
                 }
+
+            } else {
+                request.setStatus(confirmed);
+                result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
             }
-            participationRequestRepository.saveAll(requests);
+        }
+        participationRequestRepository.saveAll(requests);
         return result;
     }
 }

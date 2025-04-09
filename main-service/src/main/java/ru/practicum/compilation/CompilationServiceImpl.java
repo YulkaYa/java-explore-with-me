@@ -3,6 +3,7 @@ package ru.practicum.compilation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,6 @@ import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.dal.EventRepository;
 import ru.practicum.event.model.Event;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +33,18 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         List<Long> eventIds = newCompilationDto.getEvents();
         validateEventsInCompilationExist(eventIds);
-        Compilation compilation = mapper.newCompilationDtoToCompilation(newCompilationDto, getEmptyEventsByIds(eventIds));
+        List<Event> events = eventRepository.findAllWithCategoriesByEventIds(eventIds);
+
+        Compilation compilation = mapper.newCompilationDtoToCompilation(newCompilationDto, events);
         return mapper.compilationToCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
     @Transactional
     public void deleteCompilation(Long id) {
-        getCompilationByIdOrThrow(id);
+        if (!compilationRepository.isCompilationExist(id)) {
+            throw new NotFoundException("The required object was not found.");
+        }
         compilationRepository.deleteById(id);
     }
 
@@ -54,6 +58,20 @@ public class CompilationServiceImpl implements CompilationService {
         compilation = mapper.updateCompilationRequestToCompilation(updateCompilationRequest, getEmptyEventsByIds(eventIds), compilation);
         compilation = compilationRepository.save(compilation);
         return mapper.compilationToCompilationDto(compilationRepository.save(compilation));
+    }
+
+    @Override
+    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        Page<Compilation> compilationPage = compilationRepository.findCompilationsByPinned(pinned, page);
+        return compilationPage
+                .map(mapper::compilationToCompilationDto)
+                .getContent();
+    }
+
+    @Override
+    public CompilationDto getCompilationById(Long id) {
+        return mapper.compilationToCompilationDto(getCompilationByIdOrThrow(id));
     }
 
     private void validateEventsInCompilationExist(List<Long> eventIds) {
@@ -72,21 +90,8 @@ public class CompilationServiceImpl implements CompilationService {
         return eventsToUpdate;
     }
 
-    @Override
-    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
-        return compilationRepository.findCompilationsByPinned(pinned, page)
-                .map(mapper::compilationToCompilationDto)
-                .getContent();
-    }
-
     private Compilation getCompilationByIdOrThrow(Long id) {
         return  compilationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("The required object was not found."));
-    }
-
-    @Override
-    public CompilationDto getCompilationById(Long id) {
-        return mapper.compilationToCompilationDto(getCompilationByIdOrThrow(id));
     }
 }

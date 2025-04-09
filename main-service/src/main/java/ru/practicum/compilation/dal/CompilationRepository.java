@@ -8,8 +8,14 @@ import ru.practicum.compilation.model.Compilation;
 
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
     @Query("SELECT c FROM Compilation c " +
+            "left join fetch c.events " +
+            "left join fetch c.events.category " +
+            "left join fetch c.events.initiator " +
             "WHERE c.pinned = :pinned OR :pinned IS NULL")
     Page<Compilation> findCompilationsByPinned(
             Boolean pinned,
             Pageable page);
+
+    @Query("SELECT EXISTS (SELECT c.id FROM Compilation c WHERE c.id = :id)")
+    Boolean isCompilationExist(Long id);
 }

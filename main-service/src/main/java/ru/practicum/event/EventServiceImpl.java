@@ -24,7 +24,6 @@ import ru.practicum.participation.ParticipationRequestStatus;
 import ru.practicum.participation.dal.ParticipationRequestRepository;
 import ru.practicum.user.dal.UserRepository;
 import ru.practicum.user.model.User;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,7 +53,10 @@ public class EventServiceImpl implements EventService {
         return getEventShortDtosFromEvents(events);
     }
 
-    private List<EventShortDto> getEventShortDtosFromEvents(List<Event> events) {
+    public List<EventShortDto> getEventShortDtosFromEvents(List<Event> events) {
+        if (events.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<Long> eventIds = events.stream().map(Event::getId).toList();
         Map<Long, Long> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
@@ -74,7 +76,10 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    private List<EventFullDto> getEventFullDtosFromEvents(List<Event> events) {
+    public List<EventFullDto> getEventFullDtosFromEvents(List<Event> events) {
+        if (events.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<Long> eventIds = events.stream().map(Event::getId).toList();
         Map<Long, Long> eventIdsAndConfirmedRequests = getConfirmedRequestsByEventIds(eventIds);
         Map<Long, Long> eventIdsAndViews = getViewsByEventIds(events);
@@ -319,7 +324,14 @@ public class EventServiceImpl implements EventService {
 
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {
         List<String> uris = new ArrayList<>();
-        LocalDateTime startDate = events.stream().map(Event::getCreatedOn).min(LocalDateTime::compareTo).orElse(LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0));
+        LocalDateTime startDate = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
+        if (events.size() > 1) {
+            startDate = events.stream()
+                    .map(Event::getCreatedOn)
+                    .min(LocalDateTime::compareTo)
+                    .orElse(LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0));
+        }
+
         events.forEach(event -> uris.add("/events/" + event.getId()));
         List<ViewStatsDto> viewStatsDtos = statsClient.getStats(startDate.minusHours(1), LocalDateTime.now().plusHours(1), uris, true);
         Map<Long, Long> result = new HashMap<>();

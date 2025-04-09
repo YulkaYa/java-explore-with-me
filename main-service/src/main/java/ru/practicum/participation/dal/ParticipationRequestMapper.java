@@ -6,7 +6,6 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.practicum.participation.dto.ParticipationRequestDto;
 import ru.practicum.participation.model.ParticipationRequest;
-
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

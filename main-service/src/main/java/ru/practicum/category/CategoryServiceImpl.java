@@ -37,7 +37,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(Long id) {
-        getCategoryIfExistOrThrow(id);
+        if (!categoryRepository.isCategoryExist(id)) {
+            throw new NotFoundException("Category not found");
+        }
         if (eventRepository.findIdsByCategoryId(id, PageRequest.of(0, 1)).getContent().isEmpty()) {
             categoryRepository.deleteById(id);
         } else throw new ConditionsNotMetException("For the requested operation the conditions are not met.");
@@ -73,10 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long id) {
-        return mapper.categoryToCategoryDto(getCategoryIfExistOrThrow(id));
-    }
-
-    private Category getCategoryIfExistOrThrow(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
+        return mapper.categoryToCategoryDto(category);
     }
 }

@@ -12,5 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE u.id in :ids OR :ids IS NULL")
     Page<User> findByIdIn(Collection<Long> ids, Pageable page);
 
-    User findByEmail(String email);
+    @Query("SELECT u.id FROM User u " +
+            "WHERE u.email = :email")
+    Long findByEmail(String email);
 }
