@@ -28,15 +28,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
+    public CategoryDto add(NewCategoryDto newCategoryDto) {
         Category category = mapper.newDtoToEntity(newCategoryDto);
-        validateNewNameCategory(null, newCategoryDto.getName());
+        validateNameCategory(null, newCategoryDto.getName());
         return mapper.toDto(categoryRepository.save(category));
     }
 
     @Override
     @Transactional
-    public void deleteCategory(Long id) {
+    public void delete(Long id) {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundException("Category not found");
         }
@@ -47,15 +47,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
+    public CategoryDto update(Long id, CategoryDto categoryDto) {
         Category category = mapper.toEntity(getCategoryById(id));
         String nameInNewCategory = categoryDto.getName();
-        validateNewNameCategory(id, nameInNewCategory);
+        validateNameCategory(id, nameInNewCategory);
         category = mapper.updateFromDto(categoryDto, category);
         return mapper.toDto(categoryRepository.save(category));
     }
 
-    private void validateNewNameCategory(Long id, String nameInNewCategory) {
+    private void validateNameCategory(Long id, String nameInNewCategory) {
         Category categoryWithSameName = categoryRepository.findByName(nameInNewCategory);
         if (nameInNewCategory != null && categoryWithSameName != null) {
             if (nameInNewCategory.equals(categoryWithSameName.getName())

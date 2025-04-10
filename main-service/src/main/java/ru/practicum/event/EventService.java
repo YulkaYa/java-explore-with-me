@@ -14,13 +14,13 @@ public interface EventService {
     List<EventShortDto> getEventsByUser(Long userId, int from, int size);
 
     // Добавление нового события
-    EventFullDto addEvent(Long userId, NewEventDto newEventDto);
+    EventFullDto add(Long userId, NewEventDto newEventDto);
 
     // Получение события по ID и пользователю
-    EventFullDto getEventByIdAndUser(Long userId, Long eventId);
+    EventFullDto getByIdAndUser(Long userId, Long eventId);
 
     // Изменение события
-    <T extends BaseUpdateEventRequest> EventFullDto updateEvent(Long userId, Long eventId, T updateEventRequest, long durationHours);
+    <T extends BaseUpdateEventRequest> EventFullDto update(Long userId, Long eventId, T updateEventRequest, long durationHours);
 
     List<EventFullDto> getEvents(List<Long> users, List<EventState> states, List<Long> categories,
                                   LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size);

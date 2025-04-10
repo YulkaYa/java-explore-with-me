@@ -50,10 +50,10 @@ public class EventServiceImpl implements EventService {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
         List<Event> events = eventRepository.findByInitiatorId(userId, page).getContent();
-        return getEventShortDtosFromEvents(events);
+        return getShortDtosFromEvents(events);
     }
 
-    public List<EventShortDto> getEventShortDtosFromEvents(List<Event> events) {
+    public List<EventShortDto> getShortDtosFromEvents(List<Event> events) {
         if (events.isEmpty()) {
             return new ArrayList<>();
         }
@@ -76,7 +76,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    public List<EventFullDto> getEventFullDtosFromEvents(List<Event> events) {
+    public List<EventFullDto> getFullDtosFromEvents(List<Event> events) {
         if (events.isEmpty()) {
             return new ArrayList<>();
         }
@@ -102,7 +102,7 @@ public class EventServiceImpl implements EventService {
     // Добавление нового события
     @Transactional
     @Override
-    public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
+    public EventFullDto add(Long userId, NewEventDto newEventDto) {
 
         User initiator = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -121,15 +121,15 @@ public class EventServiceImpl implements EventService {
 
     // Получение события по ID и пользователю
     @Override
-    public EventFullDto getEventByIdAndUser(Long userId, Long eventId) {
-        Event event = getEventIfExistOrThrow(userId, eventId);
-        return getEventFullDtosFromEvents(List.of(event)).getFirst();
+    public EventFullDto getByIdAndUser(Long userId, Long eventId) {
+        Event event = getIfExistOrThrow(userId, eventId);
+        return getFullDtosFromEvents(List.of(event)).getFirst();
     }
 
     @Transactional
     @Override
-    public <T extends BaseUpdateEventRequest> EventFullDto updateEvent(Long userId, Long eventId, T updateEventRequest, long durationHours) {
-        Event event = getEventIfExistOrThrow(userId, eventId);
+    public <T extends BaseUpdateEventRequest> EventFullDto update(Long userId, Long eventId, T updateEventRequest, long durationHours) {
+        Event event = getIfExistOrThrow(userId, eventId);
 
         if (event.getState() != EventState.PENDING && event.getState() != EventState.CANCELED) {
             throw new ConditionsNotMetException("Only pending or canceled events can be updated");
@@ -139,8 +139,8 @@ public class EventServiceImpl implements EventService {
             validateEventDate(updateEventRequest.getEventDate(), durationHours);
         }
 
-        event = updateFieldsOfEvent(updateEventRequest, event);
-        return getEventFullDtosFromEvents(List.of(eventRepository.save(event))).getFirst();
+        event = updateFields(updateEventRequest, event);
+        return getFullDtosFromEvents(List.of(eventRepository.save(event))).getFirst();
     }
 
     private static void validateEventDate(LocalDateTime eventDate, long hours) {
@@ -150,7 +150,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private Event getEventIfExistOrThrow(Long userId, Long eventId) {
+    private Event getIfExistOrThrow(Long userId, Long eventId) {
         Event event;
         if (userId == null) {
             event = eventRepository.findById(eventId)
@@ -162,7 +162,7 @@ public class EventServiceImpl implements EventService {
         return event;
     }
 
-    private <T extends BaseUpdateEventRequest> Event updateFieldsOfEvent(T updateEventRequest, Event event) {
+    private <T extends BaseUpdateEventRequest> Event updateFields(T updateEventRequest, Event event) {
 
         if (updateEventRequest.getCategory() != null) {
             event.setCategory(categoryRepository.findById(updateEventRequest.getCategory())
@@ -244,7 +244,7 @@ public class EventServiceImpl implements EventService {
 
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        return getEventFullDtosFromEvents(eventRepository.findEventsByFilters(users, states, categories, rangeStart,
+        return getFullDtosFromEvents(eventRepository.findEventsByFilters(users, states, categories, rangeStart,
                 rangeEnd, page).getContent());
     }
 
@@ -281,7 +281,7 @@ public class EventServiceImpl implements EventService {
                 page).getContent().stream().collect(Collectors.toMap(Event::getId, event -> event));
 
         sendStats(httpServletRequest);
-        List<EventShortDto> eventsShortDtos = getEventShortDtosFromEvents(mapEvents.values().stream().toList());
+        List<EventShortDto> eventsShortDtos = getShortDtosFromEvents(mapEvents.values().stream().toList());
 
         if (sort != null) {
             if ("EVENT_DATE".equalsIgnoreCase(sort)) {
@@ -320,7 +320,7 @@ public class EventServiceImpl implements EventService {
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("EventStatus is not Published");
         }
-        return getEventFullDtosFromEvents(List.of(event)).getFirst();
+        return getFullDtosFromEvents(List.of(event)).getFirst();
     }
 
     private Map<Long, Long> getViewsByEventIds(List<Event> events) {

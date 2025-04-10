@@ -36,7 +36,7 @@ public class AdminEventController {
         @Validated
         public EventFullDto updateEvent(@PathVariable Long eventId,
                                         @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
-            return eventService.updateEvent(null, eventId, updateEventAdminRequest, 1);
+            return eventService.update(null, eventId, updateEventAdminRequest, 1);
         }
     }
 

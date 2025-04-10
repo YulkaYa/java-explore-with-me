@@ -41,7 +41,7 @@ public class PrivateEventController {
     @ResponseStatus(HttpStatus.CREATED)
     @Validated
     public EventFullDto addEvent(@PathVariable Long userId, @RequestBody @Valid NewEventDto newEventDto) {
-        return eventService.addEvent(userId, newEventDto);
+        return eventService.add(userId, newEventDto);
     }
 
     // Получение полной информации о событии, добавленном текущим пользователем
@@ -49,7 +49,7 @@ public class PrivateEventController {
     public EventFullDto getEventById(
             @PathVariable (required = true) Long userId,
             @PathVariable (required = true) Long eventId) {
-        return eventService.getEventByIdAndUser(userId, eventId);
+        return eventService.getByIdAndUser(userId, eventId);
     }
 
     // Изменение события, добавленного текущим пользователем
@@ -59,7 +59,7 @@ public class PrivateEventController {
             @PathVariable Long userId,
             @PathVariable Long eventId,
             @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest) {
-        return eventService.updateEvent(userId, eventId, updateEventUserRequest, 2);
+        return eventService.update(userId, eventId, updateEventUserRequest, 2);
     }
 
     // Получение информации о запросах на участие в событии текущего пользователя

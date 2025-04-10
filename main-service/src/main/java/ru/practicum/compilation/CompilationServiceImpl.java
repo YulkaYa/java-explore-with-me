@@ -30,9 +30,9 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
+    public CompilationDto add(NewCompilationDto newCompilationDto) {
         List<Long> eventIds = newCompilationDto.getEvents();
-        validateEventsInCompilationExist(eventIds);
+        validateEventsExist(eventIds);
         List<Event> events = eventRepository.findAllWithCategoriesByEventIds(eventIds);
 
         Compilation compilation = mapper.newDtoToEntity(newCompilationDto, events);
@@ -41,7 +41,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public void deleteCompilation(Long id) {
+    public void delete(Long id) {
         if (!compilationRepository.existsById(id)) {
             throw new NotFoundException("The required object was not found.");
         }
@@ -50,10 +50,10 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto updateCompilation(Long id, UpdateCompilationRequest updateCompilationRequest) {
+    public CompilationDto update(Long id, UpdateCompilationRequest updateCompilationRequest) {
         List<Long> eventIds = updateCompilationRequest.getEvents();
-        validateEventsInCompilationExist(eventIds);
-        Compilation compilation =  getCompilationByIdOrThrow(id);
+        validateEventsExist(eventIds);
+        Compilation compilation =  getByIdOrThrow(id);
 
         compilation = mapper.updateEntity(updateCompilationRequest, getEmptyEventsByIds(eventIds), compilation);
         compilation = compilationRepository.save(compilation);
@@ -61,7 +61,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
+    public List<CompilationDto> getPinned(Boolean pinned, int from, int size) {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         Page<Compilation> compilationPage = compilationRepository.findCompilationsByPinned(pinned, page);
         return compilationPage
@@ -70,11 +70,11 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto getCompilationById(Long id) {
-        return mapper.toDto(getCompilationByIdOrThrow(id));
+    public CompilationDto getById(Long id) {
+        return mapper.toDto(getByIdOrThrow(id));
     }
 
-    private void validateEventsInCompilationExist(List<Long> eventIds) {
+    private void validateEventsExist(List<Long> eventIds) {
         if (eventRepository.findIdsByEventId(eventIds).size() != eventIds.size()) {
             throw new ConditionsNotMetException("Events not found");
         }
@@ -90,7 +90,7 @@ public class CompilationServiceImpl implements CompilationService {
         return eventsToUpdate;
     }
 
-    private Compilation getCompilationByIdOrThrow(Long id) {
+    private Compilation getByIdOrThrow(Long id) {
         return  compilationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("The required object was not found."));
     }
