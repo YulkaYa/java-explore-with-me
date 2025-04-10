@@ -13,14 +13,14 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { EventMapper.class, EventServiceImpl.class })
 public interface CompilationMapper {
 
-    CompilationDto compilationToCompilationDto(Compilation compilation);
+    CompilationDto toDto(Compilation compilation);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "events", source = "events")
-    Compilation newCompilationDtoToCompilation(NewCompilationDto newCompilationDto, List<Event> events);
+    Compilation newDtoToEntity(NewCompilationDto newCompilationDto, List<Event> events);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "events", source = "events")
-    Compilation updateCompilationRequestToCompilation(UpdateCompilationRequest updateCompilationRequest, List<Event> events, @MappingTarget Compilation compilation);
+    Compilation updateEntity(UpdateCompilationRequest updateCompilationRequest, List<Event> events, @MappingTarget Compilation compilation);
 
 }

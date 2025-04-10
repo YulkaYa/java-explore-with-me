@@ -9,15 +9,15 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CategoryMapper {
 
-    Category categoryDtotoCategory(CategoryDto categoryDto);
+    Category toEntity(CategoryDto categoryDto);
 
     @Mapping(target = "id", ignore = true)
-    Category newCategoryDtoToCategory(NewCategoryDto newCategoryDto);
+    Category newDtoToEntity(NewCategoryDto newCategoryDto);
 
-    CategoryDto categoryToCategoryDto(Category category);
+    CategoryDto toDto(Category category);
 
     @Mapping(target = "id", ignore = true)
-    Category updateCategoryFromCategoryDto(CategoryDto categoryDto, @MappingTarget Category category);
+    Category updateFromDto(CategoryDto categoryDto, @MappingTarget Category category);
 
-    List<CategoryDto> toListCategoryDto(List<Category> categories);
+    List<CategoryDto> toListOfDto(List<Category> categories);
 }

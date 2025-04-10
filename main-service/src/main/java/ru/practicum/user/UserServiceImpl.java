@@ -25,9 +25,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto addUser(NewUserRequest newUserRequest) {
-        User user = mapper.newUserRequestToUser(newUserRequest);
+        User user = mapper.newDtoToEntity(newUserRequest);
         validateNewEmailUser(null, newUserRequest.getEmail());
-        return mapper.userToUserDto(userRepository.save(user));
+        return mapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers(Collection<Long> ids, int from, int size) {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         return userRepository.findByIdIn(ids, page)
-                .map(mapper::userToUserDto)
+                .map(mapper::toDto)
                 .getContent();
     }
 

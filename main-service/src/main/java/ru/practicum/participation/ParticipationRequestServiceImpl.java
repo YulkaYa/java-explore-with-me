@@ -77,7 +77,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             }
         }
 
-        return mapper.participationRequestToParticipationRequestDto(participationRequestRepository.save(request));
+        return mapper.toDto(participationRequestRepository.save(request));
     }
 
     // Отмена заявки на участие
@@ -92,14 +92,14 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         request.setStatus(ParticipationRequestStatus.CANCELED);
-        return mapper.participationRequestToParticipationRequestDto(participationRequestRepository.save(request));
+        return mapper.toDto(participationRequestRepository.save(request));
     }
 
     // Получение заявок текущего пользователя на участие
     @Override
     public List<ParticipationRequestDto> getParticipationsByRequesterId(Long userId) {
         List<ParticipationRequest> list = participationRequestRepository.findByRequesterId(userId);
-        return mapper.toListParticipationRequestDto(list);
+        return mapper.toListOfDto(list);
     }
 
     // Получение заявок на участие в событии текущего пользователя
@@ -107,7 +107,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     public List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId) {
         eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new NotFoundException("No such event with such initiatorId"));
         List<ParticipationRequest> participationRequests = (participationRequestRepository.findByEventId(eventId));
-        return mapper.toListParticipationRequestDto(participationRequests);
+        return mapper.toListOfDto(participationRequests);
     }
 
     @Transactional
@@ -147,16 +147,16 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
                 if (limit > countOfConfirmedRequests && updateStatus.equals(confirmed)) {
                     request.setStatus(confirmed);
-                    result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
+                    result.getConfirmedRequests().add(mapper.toDto(request));
                     countOfConfirmedRequests++;
                 } else {
                     request.setStatus(rejected);
-                    result.getRejectedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
+                    result.getRejectedRequests().add(mapper.toDto(request));
                 }
 
             } else {
                 request.setStatus(confirmed);
-                result.getConfirmedRequests().add(mapper.participationRequestToParticipationRequestDto(request));
+                result.getConfirmedRequests().add(mapper.toDto(request));
             }
         }
         participationRequestRepository.saveAll(requests);

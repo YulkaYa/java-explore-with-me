@@ -13,7 +13,7 @@ public interface ParticipationRequestMapper {
 
     @Mapping(source = "event.id", target = "event")
     @Mapping(source = "requester.id", target = "requester")
-    ParticipationRequestDto participationRequestToParticipationRequestDto(ParticipationRequest participationRequest);
+    ParticipationRequestDto toDto(ParticipationRequest participationRequest);
 
-    List<ParticipationRequestDto> toListParticipationRequestDto(List<ParticipationRequest> participationRequest);
+    List<ParticipationRequestDto> toListOfDto(List<ParticipationRequest> participationRequest);
 }

@@ -71,7 +71,7 @@ public class EventServiceImpl implements EventService {
 
                     confirmedRequests = confirmedRequests == null ? 0 : confirmedRequests;
                     // формируем нужную информацию
-                    return mapper.eventToEventShortDto(event, views, confirmedRequests);
+                    return mapper.toShortDto(event, views, confirmedRequests);
                 })
                 .collect(Collectors.toList());
     }
@@ -94,7 +94,7 @@ public class EventServiceImpl implements EventService {
                     Long confirmedRequests = eventIdsAndConfirmedRequests.get(eventId);
                     confirmedRequests = confirmedRequests == null ? 0 : confirmedRequests;
 
-                    return mapper.eventToEventFullDto(event, views, confirmedRequests);
+                    return mapper.toFullDto(event, views, confirmedRequests);
                 })
                 .collect(Collectors.toList());
     }
@@ -110,13 +110,13 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Category not found"));
         validateEventDate(newEventDto.getEventDate(), 2);
 
-        Event event = mapper.newEventDtotoEvent(newEventDto);
+        Event event = mapper.newDtoToEvent(newEventDto);
         event.setInitiator(initiator);
         event.setCreatedOn(LocalDateTime.now());
         event.setState(EventState.PENDING);
         event = eventRepository.save(event);
 
-        return mapper.eventToEventFullDto(event, 0L, 0L);
+        return mapper.toFullDto(event, 0L, 0L);
     }
 
     // Получение события по ID и пользователю
@@ -126,6 +126,7 @@ public class EventServiceImpl implements EventService {
         return getEventFullDtosFromEvents(List.of(event)).getFirst();
     }
 
+    @Transactional
     @Override
     public <T extends BaseUpdateEventRequest> EventFullDto updateEvent(Long userId, Long eventId, T updateEventRequest, long durationHours) {
         Event event = getEventIfExistOrThrow(userId, eventId);

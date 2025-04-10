@@ -29,15 +29,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        Category category = mapper.newCategoryDtoToCategory(newCategoryDto);
+        Category category = mapper.newDtoToEntity(newCategoryDto);
         validateNewNameCategory(null, newCategoryDto.getName());
-        return mapper.categoryToCategoryDto(categoryRepository.save(category));
+        return mapper.toDto(categoryRepository.save(category));
     }
 
     @Override
     @Transactional
     public void deleteCategory(Long id) {
-        if (!categoryRepository.isCategoryExist(id)) {
+        if (!categoryRepository.existsById(id)) {
             throw new NotFoundException("Category not found");
         }
         if (eventRepository.findIdsByCategoryId(id, PageRequest.of(0, 1)).getContent().isEmpty()) {
@@ -48,11 +48,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = mapper.categoryDtotoCategory(getCategoryById(id));
+        Category category = mapper.toEntity(getCategoryById(id));
         String nameInNewCategory = categoryDto.getName();
         validateNewNameCategory(id, nameInNewCategory);
-        category = mapper.updateCategoryFromCategoryDto(categoryDto, category);
-        return mapper.categoryToCategoryDto(categoryRepository.save(category));
+        category = mapper.updateFromDto(categoryDto, category);
+        return mapper.toDto(categoryRepository.save(category));
     }
 
     private void validateNewNameCategory(Long id, String nameInNewCategory) {
@@ -69,13 +69,13 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> getCategories(int from, int size) {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         return categoryRepository.findAll(page)
-                .map(mapper::categoryToCategoryDto)
+                .map(mapper::toDto)
                 .getContent();
     }
 
     @Override
     public CategoryDto getCategoryById(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
-        return mapper.categoryToCategoryDto(category);
+        return mapper.toDto(category);
     }
 }

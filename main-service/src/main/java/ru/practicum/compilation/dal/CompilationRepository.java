@@ -15,7 +15,4 @@ public interface CompilationRepository extends JpaRepository<Compilation, Long> 
     Page<Compilation> findCompilationsByPinned(
             Boolean pinned,
             Pageable page);
-
-    @Query("SELECT EXISTS (SELECT c.id FROM Compilation c WHERE c.id = :id)")
-    Boolean isCompilationExist(Long id);
 }

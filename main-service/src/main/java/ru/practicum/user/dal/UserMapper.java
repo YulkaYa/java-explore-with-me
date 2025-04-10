@@ -12,10 +12,10 @@ import ru.practicum.user.model.User;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = { UserRepository.class })
 public interface UserMapper {
 
-    UserDto userToUserDto(User user);
+    UserDto toDto(User user);
 
     @Mapping(target = "id", ignore = true)
-    User newUserRequestToUser(NewUserRequest newUserRequest);
+    User newDtoToEntity(NewUserRequest newUserRequest);
 
-    UserShortDto userToUserShortDto(User user);
+    UserShortDto toShortDto(User user);
 }

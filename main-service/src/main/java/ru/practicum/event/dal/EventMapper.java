@@ -21,9 +21,9 @@ public interface EventMapper {
     @Mapping(target = "initiator", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category.id", source = "category")
-    Event newEventDtotoEvent(NewEventDto newEventDto);
+    Event newDtoToEvent(NewEventDto newEventDto);
 
-    EventFullDto eventToEventFullDto(Event event, Long views, Long confirmedRequests);
+    EventFullDto toFullDto(Event event, Long views, Long confirmedRequests);
 
-    EventShortDto eventToEventShortDto(Event event, Long views, Long confirmedRequests);
+    EventShortDto toShortDto(Event event, Long views, Long confirmedRequests);
 }

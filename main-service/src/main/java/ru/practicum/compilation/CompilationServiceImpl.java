@@ -35,14 +35,14 @@ public class CompilationServiceImpl implements CompilationService {
         validateEventsInCompilationExist(eventIds);
         List<Event> events = eventRepository.findAllWithCategoriesByEventIds(eventIds);
 
-        Compilation compilation = mapper.newCompilationDtoToCompilation(newCompilationDto, events);
-        return mapper.compilationToCompilationDto(compilationRepository.save(compilation));
+        Compilation compilation = mapper.newDtoToEntity(newCompilationDto, events);
+        return mapper.toDto(compilationRepository.save(compilation));
     }
 
     @Override
     @Transactional
     public void deleteCompilation(Long id) {
-        if (!compilationRepository.isCompilationExist(id)) {
+        if (!compilationRepository.existsById(id)) {
             throw new NotFoundException("The required object was not found.");
         }
         compilationRepository.deleteById(id);
@@ -55,9 +55,9 @@ public class CompilationServiceImpl implements CompilationService {
         validateEventsInCompilationExist(eventIds);
         Compilation compilation =  getCompilationByIdOrThrow(id);
 
-        compilation = mapper.updateCompilationRequestToCompilation(updateCompilationRequest, getEmptyEventsByIds(eventIds), compilation);
+        compilation = mapper.updateEntity(updateCompilationRequest, getEmptyEventsByIds(eventIds), compilation);
         compilation = compilationRepository.save(compilation);
-        return mapper.compilationToCompilationDto(compilationRepository.save(compilation));
+        return mapper.toDto(compilationRepository.save(compilation));
     }
 
     @Override
@@ -65,13 +65,13 @@ public class CompilationServiceImpl implements CompilationService {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         Page<Compilation> compilationPage = compilationRepository.findCompilationsByPinned(pinned, page);
         return compilationPage
-                .map(mapper::compilationToCompilationDto)
+                .map(mapper::toDto)
                 .getContent();
     }
 
     @Override
     public CompilationDto getCompilationById(Long id) {
-        return mapper.compilationToCompilationDto(getCompilationByIdOrThrow(id));
+        return mapper.toDto(getCompilationByIdOrThrow(id));
     }
 
     private void validateEventsInCompilationExist(List<Long> eventIds) {
