@@ -1,26 +1,21 @@
 package ru.practicum;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class StatsClient {
 
-    private final RestTemplate restTemplate;
-
-    @Autowired
-    public StatsClient(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
-    }
+    RestTemplate restTemplate = new RestTemplate();
 
     @Value("${stats-service.url}")
     private String statsServiceUrl;
@@ -29,14 +24,29 @@ public class StatsClient {
         restTemplate.postForObject(statsServiceUrl + "/hit", endpointHitDto, Void.class);
     }
 
-    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        Map<String, Object> parameters = Map.of(
+    public List<ViewStatsDto> getStats(LocalDateTime start,
+                                       LocalDateTime end,
+                                       List<String> uris,
+                                       boolean unique) {
+
+        // Базовый URL (без параметров)
+        String baseUrl = statsServiceUrl + "/stats";
+
+        Map<String, Object> requestParams = Map.of(
                 "start", start,
                 "end", end,
-                "uris", uris,
-                "unique", unique
+                "uris", uris.toString(),
+                "unique", String.valueOf(unique)
         );
-        ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(statsServiceUrl + "/stats", ViewStatsDto[].class, parameters);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl);
+        for (Map.Entry<String, Object> entry : requestParams.entrySet()) {
+            builder.queryParam(entry.getKey(), entry.getValue());
+        }
+        ResponseEntity<ViewStatsDto[]> response = restTemplate.getForEntity(
+                builder.toUriString(),
+                ViewStatsDto[].class
+        );
         return Arrays.asList(response.getBody());
     }
 }
