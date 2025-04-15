@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.comment.enums.CommentState;
+import ru.practicum.event.dto.BaseEvent;
+import ru.practicum.event.dto.BaseUpdateEventRequest;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.user.dto.UserShortDto;
 
@@ -23,12 +25,12 @@ public class CommentFullDto {
     private Long id;
 
     @NotBlank
-    @Pattern(regexp = ".*\\S+.*", message = "Title не может состоять из пробелов или быть пустым")
-    @Size(min = 20, max = 2000)
+    @Pattern(regexp = "(\\n*.*\\r*.*)*(.*\\S+.*)*(\\n*.*\\r*.*)*", message = "title не может состоять из пробелов или быть пустым")
+    @Size(min = 3, max = 120)
     private String title;
 
     @NotBlank
-    @Pattern(regexp = ".*\\S+.*", message = "Text не может состоять из пробелов или быть пустым")
+    @Pattern(regexp = "(\\n*.*\\r*.*)*(.*\\S+.*)*(\\n*.*\\r*.*)*", message = "text не может состоять из пробелов или быть пустым")
     @Size(min = 20, max = 7000)
     private String text;
 
@@ -36,7 +38,7 @@ public class CommentFullDto {
     private UserShortDto creator;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private EventShortDto event;
+    private BaseEvent event;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
@@ -46,7 +48,6 @@ public class CommentFullDto {
 
     private CommentState state;
 
-    @Pattern(regexp = ".*\\S+.*", message = "Text не может состоять из пробелов или быть пустым")
     @Size(min = 20, max = 7000)
     private String adminComment;
 }

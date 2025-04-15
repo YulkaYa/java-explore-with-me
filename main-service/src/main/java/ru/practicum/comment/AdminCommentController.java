@@ -21,12 +21,12 @@ public class AdminCommentController {
     private final CommentService commentService;
 
     @PatchMapping("/moderate")
-    public CommentFullDto moderateComments(@RequestBody @Valid CommentModerateDto commentModerateDto) {
-        return commentService.moderateComment(commentModerateDto);
+    public List<CommentFullDto> moderateComments(@RequestBody @Valid List<CommentModerateDto> commentModerateDtos) {
+        return commentService.moderateComments(commentModerateDtos);
     }
 
-    @GetMapping()
-    public List<CommentFullDto> getUserComments(@PathVariable CommentState state) {
+    @GetMapping("/{state}")
+    public List<CommentFullDto> getCommentsByState(@PathVariable CommentState state) {
         return commentService.getCommentsByState(state);
     }
 

@@ -12,12 +12,14 @@ import ru.practicum.comment.enums.CommentUserAction;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.common.ConditionsNotMetException;
 import ru.practicum.common.NotFoundException;
+import ru.practicum.event.EventState;
 import ru.practicum.event.dal.EventRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.user.dal.UserRepository;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,9 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found"));
         Event event = eventRepository.findById(newCommentDto.getEventId())
                 .orElseThrow(() -> new NotFoundException("Event with id=" + newCommentDto.getEventId() + " not found"));
-
+        if (event.getState() != EventState.PUBLISHED) {
+            throw new ConditionsNotMetException("Event should be in Published status");
+        }
         Comment comment = commentMapper.toComment(newCommentDto);
         comment.setCreator(user);
         comment.setEvent(event);
@@ -55,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentShortDto> getCommentsByEventId(Long eventId) {
+    public List<CommentShortDto> getPublishedCommentsByEventId(Long eventId) {
         List<Comment> comments = commentRepository.findAllByEventIdAndState(eventId, CommentState.PUBLISHED);
         return comments.stream()
                 .map(commentMapper::toCommentShortDto)
@@ -101,25 +105,33 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentFullDto moderateComment(CommentModerateDto commentModerateDto) {
-        Comment comment = commentRepository.findById(commentModerateDto.getId())
-                .orElseThrow(() -> new NotFoundException("Comment with id=" + commentModerateDto.getId() + " not found"));
-
-        if (comment.getState() != CommentState.PENDING) {
-            throw new ConditionsNotMetException("Only Pending comment can be edited");
-        }
-
-        if (commentModerateDto.getAdminAction() == CommentAdminAction.PUBLISH_COMMENT) {
-            comment.setState(CommentState.PUBLISHED);
-            comment.setPublishedOn(LocalDateTime.now());
+    public List<CommentFullDto> moderateComments(List<CommentModerateDto> commentModerateDtos) {
+        if (commentModerateDtos == null) {
+            return new ArrayList<>();
         } else {
-            comment.setState(CommentState.CANCELED);
-            comment.setPublishedOn(null);
-        }
-        comment.setAdminComment(commentModerateDto.getAdminComment());
+            List<CommentFullDto> commentFullDtos = new ArrayList<>();
+            for (CommentModerateDto commentModerateDto: commentModerateDtos) {
+                Comment comment = commentRepository.findById(commentModerateDto.getId())
+                        .orElseThrow(() -> new NotFoundException("Comment with id=" + commentModerateDto.getId() + " not found"));
 
-        Comment updatedComment = commentRepository.save(comment);
-        return commentMapper.toCommentFullDto(updatedComment);
+                if (comment.getState() != CommentState.PENDING) {
+                    throw new ConditionsNotMetException("Only Pending comment can be edited");
+                }
+
+                if (commentModerateDto.getAdminAction() == CommentAdminAction.PUBLISH_COMMENT) {
+                    comment.setState(CommentState.PUBLISHED);
+                    comment.setPublishedOn(LocalDateTime.now());
+                } else {
+                    comment.setState(CommentState.CANCELED);
+                    comment.setPublishedOn(null);
+                }
+                comment.setAdminComment(commentModerateDto.getAdminComment());
+
+                Comment updatedComment = commentRepository.save(comment);
+                commentFullDtos.add(commentMapper.toCommentFullDto(updatedComment));
+            }
+         return commentFullDtos;
+        }
     }
 
     @Override

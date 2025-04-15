@@ -14,6 +14,7 @@ import ru.practicum.StatsClient;
 import ru.practicum.ViewStatsDto;
 import ru.practicum.category.dal.CategoryRepository;
 import ru.practicum.category.model.Category;
+import ru.practicum.comment.CommentService;
 import ru.practicum.comment.dal.CommentMapper;
 import ru.practicum.comment.dal.CommentRepository;
 import ru.practicum.comment.dto.CommentShortDto;
@@ -45,6 +46,7 @@ public class EventServiceImpl implements EventService {
     private final ParticipationRequestRepository participationRequestRepository;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final CommentService commentService;
     @Value("${app-name}")
     private String appName;
 
@@ -360,7 +362,7 @@ public class EventServiceImpl implements EventService {
     private Map<Long, List<CommentShortDto>> getCommentsForEvents(List<Long> eventIds) {
         Map<Long, List<CommentShortDto>> commentsForEvents = new HashMap<>();
         eventIds.forEach(id -> commentsForEvents.put(id,
-                        commentMapper.toListCommentShortDto(commentRepository.findAllByEventIdAndState(id, CommentState.PUBLISHED))));
+                        commentService.getPublishedCommentsByEventId(id)));
         return commentsForEvents;
     }
 }

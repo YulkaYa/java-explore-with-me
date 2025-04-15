@@ -9,9 +9,7 @@ import ru.practicum.category.model.Category;
 import ru.practicum.comment.dto.CommentShortDto;
 import ru.practicum.event.EventServiceImpl;
 import ru.practicum.event.EventState;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.dto.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.user.dal.UserMapper;
 import ru.practicum.user.dto.UserShortDto;
@@ -31,4 +29,6 @@ public interface EventMapper {
     EventFullDto toFullDto(Event event, Long views, Long confirmedRequests, List<CommentShortDto> comments);
 
     EventShortDto toShortDto(Event event, Long views, Long confirmedRequests, List<CommentShortDto> comments);
+
+    BaseEvent toBaseEvent(Event event);
 }

@@ -10,13 +10,13 @@ public interface CommentService {
 
     CommentFullDto getCommentById(Long commentId);
 
-    List<CommentShortDto> getCommentsByEventId(Long eventId);
+    List<CommentShortDto> getPublishedCommentsByEventId(Long eventId);
 
     List<CommentFullDto> getUserComments(Long userId);
 
     CommentFullDto updateCommentByUser(CommentEditDto commentEditDto, Long userId);
 
-    CommentFullDto moderateComment(CommentModerateDto commentModerateDto);
+    List<CommentFullDto> moderateComments(List<CommentModerateDto> commentModerateDtos);
 
     void deleteCommentByUser(Long commentId, Long userId);
 

@@ -17,7 +17,7 @@ public class CommentModerateDto {
     private Long id;
 
     @NotBlank
-    @Pattern(regexp = ".*\\S+.*", message = "Text не может состоять из пробелов или быть пустым")
+    @Pattern(regexp = "(\\n*.*\\r*.*)*(.*\\S+.*)*(\\n*.*\\r*.*)*", message = "adminComment не может состоять из пробелов или быть пустым")
     @Size(min = 20, max = 7000)
     private String adminComment;
 
