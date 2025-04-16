@@ -24,8 +24,10 @@ public class NewCommentDto {
     private String text;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotBlank
     private Long creatorId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @NotBlank
     private Long eventId;
 }
