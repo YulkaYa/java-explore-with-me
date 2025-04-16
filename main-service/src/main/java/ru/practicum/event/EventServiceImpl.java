@@ -18,7 +18,6 @@ import ru.practicum.comment.CommentService;
 import ru.practicum.comment.dal.CommentMapper;
 import ru.practicum.comment.dal.CommentRepository;
 import ru.practicum.comment.dto.CommentShortDto;
-import ru.practicum.comment.enums.CommentState;
 import ru.practicum.common.ConditionsNotMetException;
 import ru.practicum.common.NotFoundException;
 import ru.practicum.event.dal.EventMapper;

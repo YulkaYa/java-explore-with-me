@@ -5,15 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.comment.dto.*;
-import ru.practicum.comment.enums.CommentState;
-
+import ru.practicum.comment.dto.CommentEditDto;
+import ru.practicum.comment.dto.CommentFullDto;
+import ru.practicum.comment.dto.NewCommentDto;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/comments/user") // todo  разделить на user, admin
+@RequestMapping("/comments/user")
 public class UserCommentController {
     private final CommentService commentService;
 

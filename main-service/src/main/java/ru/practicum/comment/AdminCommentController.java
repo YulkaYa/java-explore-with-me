@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/comments/admin") // todo  разделить на user, admin
+@RequestMapping("/comments/admin")
 public class AdminCommentController {
     private final CommentService commentService;
 

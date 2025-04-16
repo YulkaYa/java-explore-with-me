@@ -88,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (comment.getState() == CommentState.PUBLISHED) {
             throw new ConditionsNotMetException("Published comment cannot be edited");
-        } // todo может убрать
+        }
 
         comment.setTitle(commentEditDto.getTitle());
         comment.setText(commentEditDto.getText());
