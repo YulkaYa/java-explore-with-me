@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "092b7863-dfcc-4a05-a6f0-9a3e9bf4ff26",
-		"name": "Comment Service Tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_postman_id": "dcc91717-4259-45f1-896c-cc2a1d16ab20",
+		"name": "Comment Service Tests Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "34206662"
 	},
 	"item": [
@@ -1056,19 +1056,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/comments/admin/moderate",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"comments",
-								"admin",
-								"moderate"
-							]
-						}
+						"url": "http://localhost:8080/comments/admin/moderate"
 					},
 					"response": []
 				},
@@ -1194,19 +1182,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/comments/admin/PENDING",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"comments",
-								"admin",
-								"PENDING"
-							]
-						}
+						"url": "http://localhost:8080/comments/admin/PENDING"
 					},
 					"response": []
 				},
@@ -1301,19 +1277,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": {
-							"raw": "http://localhost:8080/comments/admin/{{commentId}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"comments",
-								"admin",
-								"{{commentId}}"
-							]
-						}
+						"url": "http://localhost:8080/comments/admin/{{commentId}}"
 					},
 					"response": []
 				}
@@ -1427,19 +1391,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/moderate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"moderate"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/moderate"
 							},
 							"response": []
 						},
@@ -1544,19 +1496,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/moderate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"moderate"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/moderate"
 							},
 							"response": []
 						},
@@ -1661,19 +1601,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/moderate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"moderate"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/moderate"
 							},
 							"response": []
 						},
@@ -3328,19 +3256,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/moderate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"moderate"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/moderate"
 							},
 							"response": []
 						},
@@ -3429,19 +3345,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/moderate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"moderate"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/moderate"
 							},
 							"response": []
 						},
@@ -3979,19 +3883,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/moderate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"moderate"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/moderate"
 							},
 							"response": []
 						},
@@ -4435,19 +4327,7 @@
 									"mode": "raw",
 									"raw": ""
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/admin/{{commentId}}",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"admin",
-										"{{commentId}}"
-									]
-								}
+								"url": "http://localhost:8080/comments/admin/{{commentId}}"
 							},
 							"response": []
 						}
@@ -4864,18 +4744,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/user",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"user"
-									]
-								}
+								"url": "http://localhost:8080/comments/user"
 							},
 							"response": []
 						},
@@ -4957,18 +4826,7 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/comments/user",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"user"
-									]
-								}
+								"url": "http://localhost:8080/comments/user"
 							},
 							"response": []
 						},
@@ -5063,18 +4921,7 @@
 										}
 									}
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/user",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"user"
-									]
-								}
+								"url": "http://localhost:8080/comments/user"
 							},
 							"response": []
 						},
@@ -5154,19 +5001,7 @@
 									"mode": "raw",
 									"raw": ""
 								},
-								"url": {
-									"raw": "http://localhost:8080/comments/user/{{commentId}}",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"comments",
-										"user",
-										"{{commentId}}"
-									]
-								}
+								"url": "http://localhost:8080/comments/user/{{commentId}}"
 							},
 							"response": []
 						}
@@ -5418,17 +5253,17 @@
 	"variable": [
 		{
 			"key": "userId",
-			"value": "1",
+			"value": "",
 			"type": "number"
 		},
 		{
 			"key": "eventId",
-			"value": "1",
+			"value": "",
 			"type": "number"
 		},
 		{
 			"key": "commentId",
-			"value": "1",
+			"value": "",
 			"type": "number"
 		},
 		{
@@ -5453,7 +5288,7 @@
 		},
 		{
 			"key": "reqid",
-			"value": 1,
+			"value": "",
 			"type": "number"
 		},
 		{
@@ -5470,16 +5305,16 @@
 		},
 		{
 			"key": "fromId",
-			"value": "0"
+			"value": ""
 		},
 		{
 			"key": "eid",
-			"value": 1,
+			"value": "",
 			"type": "number"
 		},
 		{
 			"key": "compid",
-			"value": 1,
+			"value": "",
 			"type": "number"
 		},
 		{
@@ -5505,22 +5340,22 @@
 		},
 		{
 			"key": "uid",
-			"value": "1",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "uid1",
-			"value": "1",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "userComment",
-			"value": "1",
+			"value": "",
 			"type": "string"
 		},
 		{
 			"key": "comId",
-			"value": "1",
+			"value": "",
 			"type": "string"
 		},
 		{
