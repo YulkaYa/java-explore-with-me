@@ -5,10 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.comment.dto.CommentEditDto;
 import ru.practicum.comment.dto.CommentFullDto;
 import ru.practicum.comment.dto.CommentModerateDto;
-import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.enums.CommentState;
 
 import java.util.List;

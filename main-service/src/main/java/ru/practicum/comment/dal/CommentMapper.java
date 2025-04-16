@@ -27,12 +27,12 @@ public interface CommentMapper {
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "creator", source = "creatorId", qualifiedByName = "mapUser")
-    @Mapping(target = "event", source = "eventId", qualifiedByName = "mapEvent")
+    @Mapping(target = "creator", source = "userId", qualifiedByName = "mapUser")
+    @Mapping(target = "event", source = "newCommentDto.eventId", qualifiedByName = "mapEvent")
     @Mapping(target = "state", ignore = true)
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "adminComment", ignore = true)
-    Comment toComment(NewCommentDto newCommentDto);
+    Comment toComment(NewCommentDto newCommentDto, Long userId);
 
     @Named("mapUser")
     default User mapUser(Long userId) {

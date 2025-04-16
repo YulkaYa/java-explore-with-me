@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
         if (event.getState() != EventState.PUBLISHED) {
             throw new ConditionsNotMetException("Event should be in Published status");
         }
-        Comment comment = commentMapper.toComment(newCommentDto);
+        Comment comment = commentMapper.toComment(newCommentDto, userId);
         comment.setCreator(user);
         comment.setEvent(event);
         comment.setState(CommentState.PENDING);
