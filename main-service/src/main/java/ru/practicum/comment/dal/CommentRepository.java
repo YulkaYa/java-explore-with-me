@@ -13,19 +13,19 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.event AND LEFT JOIN FETCH c.creator " +
             "LEFT JOIN FETCH c.event.category " +
-            "WHERE (c.creator.id = :userId ) ")
+            "WHERE (c.creator.id = :userId ) ORDER BY c.id ")
             List<Comment> findAllByCreatorId(Long userId);
 
     @Query("SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.event AND LEFT JOIN FETCH c.creator " +
             "LEFT JOIN FETCH c.event.category " +
-            "WHERE (c.state = :state ) ")
+            "WHERE (c.state = :state ) ORDER BY c.id ")
     List<Comment> findAllByState(CommentState state);
 
     @Query("SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.event AND LEFT JOIN FETCH c.creator " +
             "LEFT JOIN FETCH c.event.category " +
-            "WHERE (c.event.id = :eventId AND c.state = :state ) ")
+            "WHERE (c.event.id = :eventId AND c.state = :state ) ORDER BY c.id ")
     List<Comment> findAllByEventIdAndState(Long eventId, CommentState state);
 
     boolean existsByIdAndCreatorId(Long commentId, Long userId);
