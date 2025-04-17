@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "dcc91717-4259-45f1-896c-cc2a1d16ab20",
-		"name": "Comment Service Tests Copy",
+		"_postman_id": "2e9d481f-c12c-422a-963f-d29a7b30dc3b",
+		"name": "feature",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "34206662"
 	},
@@ -29,9 +29,11 @@
 									"        const category = await api.addCategory(rnd.getCategory());\r",
 									"        let eventBody = rnd.getEvent(category.id);\r",
 									"        eventBody['requestModeration'] = true\r",
-									"        let event = await api.addEvent(user.id, eventBody);\r",
-									"        event = await api.publishEvent(event.id);\r",
-									"        pm.collectionVariables.set(\"event\", event);\r",
+									"        const event = await api.addEvent(user.id, eventBody);\r",
+									"        await api.publishEvent(event.id);\r",
+									"        pm.collectionVariables.set('eventId', event.id);\r",
+									"        pm.collectionVariables.set('event' , JSON.stringify(event));\r",
+									"\r",
 									"\r",
 									"// добавляем коммент к созданному событию\r",
 									"        comment = rnd.getComment(event.id);\r",
@@ -79,6 +81,8 @@
 									"const source = JSON.parse(pm.request.body.raw);\r",
 									"const target = pm.response.json();\r",
 									"\r",
+									"const source1 = JSON.parse(pm.collectionVariables.get('event'));\r",
+									"\r",
 									"pm.test(\"Комментарий должно содержать поля: id, title, text, creator, event, createdOn, state\", function () {\r",
 									"pm.expect(target).to.have.property('id');\r",
 									"pm.expect(target).to.have.property('title');\r",
@@ -94,8 +98,8 @@
 									"    pm.expect(target.title).equal(source.title, 'Название комментария должно соответствовать названию комментария в запросе');\r",
 									"    pm.expect(target.text).equal(source.text, 'Текст комментария должна соответствовать тексту комментария в запросе');\r",
 									"    pm.expect(target.creator.id).equal(pm.collectionVariables.get(\"userId\"), 'id создателя комментария должен соответствовать id создателя комментария в запросе');\r",
-									"    pm.expect(target.event.id).equal(source.eventId, 'id события комментария должен соответствовать id события комментария в запросе');\r",
-									"    pm.expect(target.event.description).equal(pm.collectionVariables.get(\"event\").description,'description события должна соответствовать тексту комментария в запросе')\r",
+									"    pm.expect(target.event.id).equal(pm.collectionVariables.get('eventId'), 'id события комментария должен соответствовать id события комментария в запросе');\r",
+									"    pm.expect(target.event.description).equal(source1.description,'description события должна соответствовать тексту комментария в запросе')\r",
 									"    pm.expect(target.createdOn).to.not.be.null;\r",
 									"    pm.expect(target.state).equal(\"PENDING\");\r",
 									"});"
@@ -167,7 +171,7 @@
 									"        pm.collectionVariables.set(\"userId\", user.id);// установила в userid id юзера user\r",
 									"        pm.collectionVariables.set(\"uid1\", user.id);\r",
 									"        const comment1 = await api.addComment((rnd.getComment(event.id)),user.id);\r",
-									"        pm.collectionVariables.set(\"comment1\", comment1);\r",
+									"        pm.collectionVariables.set('comment1' , JSON.stringify(comment1));\r",
 									"        pm.collectionVariables.set(\"commentId\", comment1.id);\r",
 									"\r",
 									"    } catch(err) {\r",
@@ -205,8 +209,8 @@
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const source = pm.collectionVariables.get('comment1');\r",
 									"const target = pm.response.json();\r",
+									"const source = JSON.parse(pm.collectionVariables.get('comment1'));\r",
 									"\r",
 									"pm.test(\"Комментарий должно содержать поля: id, title, text, creator, event, createdOn, state\", function () {\r",
 									"pm.expect(target).to.have.property('id');\r",
@@ -290,8 +294,8 @@
 									"        \r",
 									"// добавляем 3й коммент к 1му событию от 2 пользователя\r",
 									"        const comment3 = await api.addComment((rnd.getComment(event1.id)), user2.id);\r",
-									"        pm.collectionVariables.set(\"comment1\", comment2);\r",
-									"        pm.collectionVariables.set(\"comment2\", comment3)\r",
+									"        pm.collectionVariables.set('comment1' , JSON.stringify(comment2));\r",
+									"        pm.collectionVariables.set('comment2' , JSON.stringify(comment3));\r",
 									"        pm.collectionVariables.set(\"userId\", user2.id);\r",
 									"\r",
 									"    } catch(err) {\r",
@@ -330,8 +334,8 @@
 									"});\r",
 									"\r",
 									"\r",
-									"const source = pm.collectionVariables.get('comment1');\r",
-									"const source1 = pm.collectionVariables.get('comment2');\r",
+									"const source = JSON.parse(pm.collectionVariables.get('comment1'));\r",
+									"const source1 = JSON.parse(pm.collectionVariables.get('comment2'));\r",
 									"const size = pm.response.json().length;\r",
 									"const target = pm.response.json()[0];\r",
 									"const target1 = pm.response.json()[1];\r",
@@ -402,11 +406,13 @@
 									"        \r",
 									"// добавляем 1й коммент к 1му событию от 1 пользователя\r",
 									"        let comment1 = await api.addComment((rnd.getComment(event1.id)), user1.id);\r",
-									"        pm.collectionVariables.set(\"comment1\", comment1);\r",
+									"\r",
+									"        pm.collectionVariables.set('comment1' , JSON.stringify(comment1));\r",
 									"        let comment2 = rnd.getComment(event1.id);\r",
 									"        comment2.userAction = \"CANCEL_REVIEW\";\r",
 									"        comment2.id = comment1.id;\r",
-									"        pm.collectionVariables.set('response', comment2);\r",
+									"\r",
+									"        pm.collectionVariables.set('response' , JSON.stringify(comment2));\r",
 									"        pm.collectionVariables.set(\"userId\", user1.id)\r",
 									"        pm.request.body.update({\r",
 									"            mode: 'raw',\r",
@@ -449,8 +455,9 @@
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const source = pm.collectionVariables.get('response');\r",
+									"const source = JSON.parse(pm.collectionVariables.get('response'));\r",
 									"const target = pm.response.json();\r",
+									"const comment1Source = JSON.parse(pm.collectionVariables.get('comment1'));\r",
 									"\r",
 									"pm.test(\"Комментарий должно содержать поля: id, title, text, creator, event, createdOn, state\", function () {\r",
 									"pm.expect(target).to.have.property('id');\r",
@@ -461,7 +468,7 @@
 									"pm.expect(target).to.have.property('createdOn');\r",
 									"pm.expect(target).to.have.property('state');\r",
 									"});\r",
-									"let comment1Source = pm.collectionVariables.get(\"comment1\");\r",
+									"\r",
 									"\r",
 									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
 									"    pm.expect(target.id).equal(comment1Source.id, 'id комментария должен соответствовать искомому id');\r",
@@ -796,7 +803,7 @@
 									"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 									"        pm.collectionVariables.set(\"eid\", event.id);\r",
 									"        event = await api.publishEvent(event.id);\r",
-									"        pm.collectionVariables.set(\"event\", event);\r",
+									"        pm.collectionVariables.set('event' , JSON.stringify(event));\r",
 									"\r",
 									"        // добавляем коммент к созданному событию\r",
 									"\r",
@@ -807,11 +814,11 @@
 									"        await api.updateByAdminComment(commentForUpd1);\r",
 									"        \r",
 									"        const foundedComment = await api.findComment(comment2.id);\r",
-									"        pm.collectionVariables.set(\"comment1\", comment1);\r",
 									"        pm.collectionVariables.set(\"commentId1\", comment1.id);\r",
-									"        pm.collectionVariables.set(\"comment2\", foundedComment);\r",
 									"        pm.collectionVariables.set(\"userId\", user.id);\r",
-									"        \r",
+									"        pm.collectionVariables.set('comment1' , JSON.stringify(comment1));\r",
+									"        pm.collectionVariables.set('comment2' , JSON.stringify(foundedComment));\r",
+									"\r",
 									"\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -847,11 +854,11 @@
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"let target = pm.response.json();\r",
-									"let source = pm.collectionVariables.get(\"comment1\");\r",
-									"let source1 = pm.collectionVariables.get(\"comment2\");\r",
-									"let event = pm.collectionVariables.get(\"event\");\r",
-									"let size = target.comments.length;\r",
+									"const target = pm.response.json();\r",
+									"const source = JSON.parse(pm.collectionVariables.get('comment1'));\r",
+									"const source1 = JSON.parse(pm.collectionVariables.get('comment2'));\r",
+									"const event = JSON.parse(pm.collectionVariables.get('event'));\r",
+									"const size = target.comments.length;\r",
 									"\r",
 									"pm.test(\"Комментарий2 должен быть найден после создания\", function () {\r",
 									"    pm.expect(source1).not.to.be.null;\r",
@@ -961,9 +968,9 @@
 									"        \r",
 									"// добавляем 3й коммент к 2му событию от 2 пользователя\r",
 									"        const comment3 = await api.addComment((rnd.getComment(event2.id)), user2.id);\r",
-									"        pm.collectionVariables.set(\"comment1\", comment1);\r",
-									"        pm.collectionVariables.set(\"comment2\", comment2)\r",
-									"        pm.collectionVariables.set(\"comment3\", comment3)\r",
+									"        pm.collectionVariables.set('comment1' , JSON.stringify(comment1));\r",
+									"        pm.collectionVariables.set('comment2' , JSON.stringify(comment2));\r",
+									"        pm.collectionVariables.set('comment3' , JSON.stringify(comment3));\r",
 									"        pm.collectionVariables.set(\"commentId1\", comment1.id);\r",
 									"        pm.collectionVariables.set(\"commentId2\", comment2.id)\r",
 									"        pm.collectionVariables.set(\"commentId3\", comment3.id)\r",
@@ -1006,9 +1013,10 @@
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"let source1 = pm.collectionVariables.get(\"comment1\");\r",
-									"let source2 = pm.collectionVariables.get(\"comment2\");\r",
-									"let source3 = pm.collectionVariables.get(\"comment3\");\r",
+									"\r",
+									"const source1 = JSON.parse(pm.collectionVariables.get('comment1'));\r",
+									"const source2 = JSON.parse(pm.collectionVariables.get('comment2'));\r",
+									"const source3 = JSON.parse(pm.collectionVariables.get('comment3'));\r",
 									"\r",
 									"const size = pm.response.json().length;\r",
 									"\r",
@@ -1095,9 +1103,9 @@
 									"        \r",
 									"// добавляем 3й коммент к 2му событию от 2 пользователя\r",
 									"        const comment3 = await api.addComment((rnd.getComment(event2.id)), user2.id);\r",
-									"        pm.collectionVariables.set(\"comment1\", comment1);\r",
-									"        pm.collectionVariables.set(\"comment2\", comment2)\r",
-									"        pm.collectionVariables.set(\"comment3\", comment3)\r",
+									"        pm.collectionVariables.set('comment1' , JSON.stringify(comment1));\r",
+									"        pm.collectionVariables.set('comment2' , JSON.stringify(comment2));\r",
+									"        pm.collectionVariables.set('comment3' , JSON.stringify(comment3));\r",
 									"        pm.collectionVariables.set(\"userId1\", user1.id);\r",
 									"        pm.collectionVariables.set(\"userId2\", user2.id);\r",
 									"\r",
@@ -1136,9 +1144,9 @@
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"let source = pm.collectionVariables.get(\"comment1\");\r",
-									"let source1 = pm.collectionVariables.get(\"comment2\");\r",
-									"let source2 = pm.collectionVariables.get(\"comment3\");\r",
+									"const source = JSON.parse(pm.collectionVariables.get('comment1'));\r",
+									"const source1 = JSON.parse(pm.collectionVariables.get('comment2'));\r",
+									"const source2 = JSON.parse(pm.collectionVariables.get('comment3'));\r",
 									"\r",
 									"const size = pm.response.json().length;\r",
 									"\r",
@@ -2622,7 +2630,7 @@
 											"        \r",
 											"// добавляем 1й коммент к 1му событию от 1 пользователя\r",
 											"        let comment1 = await api.addComment((rnd.getComment(event1.id)), user1.id);\r",
-											"        pm.collectionVariables.set(\"comment1\", comment1);\r",
+											"        pm.collectionVariables.set('comment1' , JSON.stringify(comment1));\r",
 											"        let comment2 = rnd.getComment(event1.id);\r",
 											"        comment2.userAction = \"SEND_TO_REVIEW\";\r",
 											"        comment2.id = comment1.id;\r",
@@ -5253,17 +5261,17 @@
 	"variable": [
 		{
 			"key": "userId",
-			"value": "",
+			"value": "1",
 			"type": "number"
 		},
 		{
 			"key": "eventId",
-			"value": "",
+			"value": "1",
 			"type": "number"
 		},
 		{
 			"key": "commentId",
-			"value": "",
+			"value": "1",
 			"type": "number"
 		},
 		{
@@ -5288,7 +5296,7 @@
 		},
 		{
 			"key": "reqid",
-			"value": "",
+			"value": "1",
 			"type": "number"
 		},
 		{
@@ -5305,16 +5313,16 @@
 		},
 		{
 			"key": "fromId",
-			"value": ""
+			"value": "1"
 		},
 		{
 			"key": "eid",
-			"value": "",
+			"value": "1",
 			"type": "number"
 		},
 		{
 			"key": "compid",
-			"value": "",
+			"value": "1",
 			"type": "number"
 		},
 		{
@@ -5323,7 +5331,7 @@
 		},
 		{
 			"key": "catId",
-			"value": ""
+			"value": "1"
 		},
 		{
 			"key": "toCheck",
@@ -5340,12 +5348,12 @@
 		},
 		{
 			"key": "uid",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "uid1",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
@@ -5355,7 +5363,7 @@
 		},
 		{
 			"key": "comId",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
@@ -5365,12 +5373,12 @@
 		},
 		{
 			"key": "comment1",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "comment2",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
@@ -5379,12 +5387,12 @@
 		},
 		{
 			"key": "userId1",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "userId2",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
@@ -5394,17 +5402,17 @@
 		},
 		{
 			"key": "commentId1",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "commentId2",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "commentId3",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
