@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.comment.dto.CommentShortDto;
-import ru.practicum.event.EventState;
+import ru.practicum.event.model.EventState;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.dto.UserShortDto;
 import java.time.LocalDateTime;
