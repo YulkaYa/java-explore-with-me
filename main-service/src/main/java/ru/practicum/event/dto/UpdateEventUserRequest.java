@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.event.UserStateAction;
+import ru.practicum.event.model.UserStateAction;
 
 @SuperBuilder(toBuilder = true)
 @Data

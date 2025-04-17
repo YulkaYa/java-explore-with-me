@@ -10,8 +10,11 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.comment.dto.CommentShortDto;
 import ru.practicum.user.dto.UserShortDto;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuperBuilder(toBuilder = true)
 @Data
@@ -41,4 +44,5 @@ public class EventShortDto {
     private String title;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long views;
+    private List<CommentShortDto> comments = new ArrayList<>();
 }

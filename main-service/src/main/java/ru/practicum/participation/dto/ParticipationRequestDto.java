@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.participation.ParticipationRequestStatus;
+import ru.practicum.participation.model.ParticipationRequestStatus;
 import java.time.LocalDateTime;
 
 @SuperBuilder(toBuilder = true)

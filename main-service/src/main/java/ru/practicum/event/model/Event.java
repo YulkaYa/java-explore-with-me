@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.category.model.Category;
-import ru.practicum.event.EventState;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.model.User;
 import java.time.LocalDateTime;

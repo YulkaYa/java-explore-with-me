@@ -3,7 +3,7 @@ package ru.practicum.participation.dal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.participation.ParticipationRequestStatus;
+import ru.practicum.participation.model.ParticipationRequestStatus;
 import ru.practicum.participation.model.ParticipationRequest;
 import java.util.List;
 import java.util.Map;

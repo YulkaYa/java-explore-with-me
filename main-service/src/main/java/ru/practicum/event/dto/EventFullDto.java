@@ -10,10 +10,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.event.EventState;
+import ru.practicum.comment.dto.CommentShortDto;
+import ru.practicum.event.model.EventState;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.dto.UserShortDto;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuperBuilder(toBuilder = true)
 @Data
@@ -53,4 +56,5 @@ public class EventFullDto {
     private String title;
     @PositiveOrZero
     private Long views;
+    private List<CommentShortDto> comments = new ArrayList<>();
 }

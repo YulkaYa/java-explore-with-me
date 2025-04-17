@@ -1,7 +1,7 @@
 package ru.practicum.participation.dto;
 
 import lombok.Data;
-import ru.practicum.participation.ParticipationRequestStatus;
+import ru.practicum.participation.model.ParticipationRequestStatus;
 
 import java.util.List;
 
